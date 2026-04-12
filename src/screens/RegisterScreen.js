@@ -1,39 +1,41 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useState } from 'react';
 
-export default function LoginScreen({ navigation }) {
+export default function RegisterScreen({ navigation }) {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   function validateFields() {
-    if (!email) {
-      setError('Por favor, informe seu e-mail.');
+    if (!name) {
+      setError('Por favor, informe seu nome completo.');
       return false;
     }
-    if (!email.includes('@')) {
+    if (!email || !email.includes('@')) {
       setError('Por favor, informe um e-mail válido.');
-      return false;
-    }
-    if (!password) {
-      setError('Por favor, informe sua senha.');
       return false;
     }
     if (password.length < 6) {
       setError('A senha deve ter no mínimo 6 caracteres.');
       return false;
     }
+    if (password !== confirmPassword) {
+      setError('As senhas não coincidem.');
+      return false;
+    }
     return true;
   }
 
-  async function handleLogin() {
+  async function handleRegister() {
     setError('');
     if (!validateFields()) return;
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      console.log('Login with:', email);
+      console.log('Register with:', name, email);
     }, 2000);
   }
 
@@ -42,11 +44,11 @@ export default function LoginScreen({ navigation }) {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <View style={styles.inner}>
+      <ScrollView contentContainerStyle={styles.inner} keyboardShouldPersistTaps="handled">
 
         <View style={styles.header}>
-          <Text style={styles.title}>Sistema de{'\n'}Ocorrências</Text>
-          <Text style={styles.subtitle}>Faça login para continuar</Text>
+          <Text style={styles.title}>Criar conta</Text>
+          <Text style={styles.subtitle}>Preencha os dados para se cadastrar</Text>
         </View>
 
         <View style={styles.form}>
@@ -56,6 +58,15 @@ export default function LoginScreen({ navigation }) {
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
+
+          <TextInput
+            style={styles.input}
+            placeholder="Nome completo"
+            placeholderTextColor="#999"
+            value={name}
+            onChangeText={(text) => { setName(text); setError(''); }}
+            autoCapitalize="words"
+          />
 
           <TextInput
             style={styles.input}
@@ -77,37 +88,39 @@ export default function LoginScreen({ navigation }) {
             secureTextEntry
           />
 
-          <TouchableOpacity
-            style={styles.forgotLink}
-            onPress={() => console.log('Forgot password')}
-          >
-            <Text style={styles.forgotLinkText}>Esqueci minha senha</Text>
-          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Confirmar senha"
+            placeholderTextColor="#999"
+            value={confirmPassword}
+            onChangeText={(text) => { setConfirmPassword(text); setError(''); }}
+            secureTextEntry
+          />
 
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={handleLogin}
+            onPress={handleRegister}
             disabled={loading}
           >
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.buttonText}>Entrar</Text>
+              <Text style={styles.buttonText}>Criar conta</Text>
             )}
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={styles.registerLink}
-            onPress={() => navigation.navigate('Register')}
+            style={styles.loginLink}
+            onPress={() => navigation.goBack()}
           >
-            <Text style={styles.registerLinkText}>
-              Não tem uma conta?{' '}
-              <Text style={styles.registerLinkHighlight}>Cadastre-se</Text>
+            <Text style={styles.loginLinkText}>
+              Já tem uma conta?{' '}
+              <Text style={styles.loginLinkHighlight}>Faça login</Text>
             </Text>
           </TouchableOpacity>
 
         </View>
-      </View>
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 }
@@ -118,7 +131,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   inner: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     padding: 24,
   },
@@ -132,7 +145,6 @@ const styles = StyleSheet.create({
     color: '#1a1a2e',
     marginBottom: 8,
     textAlign: 'center',
-    lineHeight: 40,
   },
   subtitle: {
     fontSize: 15,
@@ -162,13 +174,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#333',
   },
-  forgotLink: {
-    alignSelf: 'flex-end',
-  },
-  forgotLinkText: {
-    color: '#4361ee',
-    fontSize: 13,
-  },
   button: {
     backgroundColor: '#4361ee',
     borderRadius: 10,
@@ -184,15 +189,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
-  registerLink: {
+  loginLink: {
     alignItems: 'center',
     marginTop: 8,
   },
-  registerLinkText: {
+  loginLinkText: {
     color: '#666',
     fontSize: 14,
   },
-  registerLinkHighlight: {
+  loginLinkHighlight: {
     color: '#4361ee',
     fontWeight: 'bold',
   },

@@ -10,12 +10,12 @@ import { buscarOcorrencias } from '../services/ocorrenciasService';
 import { useFocusEffect } from '@react-navigation/native';
 
 const STATUS_CONFIG = {
-  aberta:      { color: '#dc2626', bg: '#fef2f2', icon: 'alert-circle' },
-  em_analise:  { color: '#d97706', bg: '#fffbeb', icon: 'time' },
+  aberta:      { color: '#EF1D26', bg: '#FFF0F0', icon: 'alert-circle' },
+  em_analise:  { color: '#C78A00', bg: '#FFF8E7', icon: 'time' },
   em_andamento:{ color: '#2563eb', bg: '#eff6ff', icon: 'construct' },
   resolvida:   { color: '#16a34a', bg: '#f0fdf4', icon: 'checkmark-circle' },
-  cancelada:   { color: '#64748b', bg: '#f8fafc', icon: 'close-circle' },
-  encerrada:   { color: '#64748b', bg: '#f8fafc', icon: 'archive' },
+  cancelada:   { color: '#666666', bg: '#F8F8F8', icon: 'close-circle' },
+  encerrada:   { color: '#666666', bg: '#F8F8F8', icon: 'archive' },
 };
 
 export default function HomeScreen({ navigation }) {
@@ -54,7 +54,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+      <StatusBar barStyle="light-content" backgroundColor="#232323" />
 
       <View style={[styles.header, { paddingTop: insets.top + 16 }]}>
         <View>
@@ -67,19 +67,19 @@ export default function HomeScreen({ navigation }) {
       </View>
 
       <View style={styles.cardsRow}>
-        <TouchableOpacity 
-          style={[styles.card, filtroAtivo === 'abertas' ? styles.cardBlue : styles.cardWhite]} 
-          onPress={() => setFiltroAtivo('abertas')} 
+        <TouchableOpacity
+          style={[styles.card, filtroAtivo === 'abertas' ? styles.cardRed : styles.cardWhite]}
+          onPress={() => setFiltroAtivo('abertas')}
           activeOpacity={0.8}
         >
-          <Ionicons name="time" size={22} color={filtroAtivo === 'abertas' ? '#fff' : '#d97706'} style={{ marginBottom: 8 }} />
-          <Text style={[styles.cardNumber, filtroAtivo === 'abertas' ? { color: '#fff' } : { color: '#d97706' }]}>{abertas.length}</Text>
+          <Ionicons name="time" size={22} color={filtroAtivo === 'abertas' ? '#fff' : '#C78A00'} style={{ marginBottom: 8 }} />
+          <Text style={[styles.cardNumber, filtroAtivo === 'abertas' ? { color: '#fff' } : { color: '#C78A00' }]}>{abertas.length}</Text>
           <Text style={filtroAtivo === 'abertas' ? styles.cardLabelWhite : styles.cardLabelGray}>Em Aberto</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity 
-          style={[styles.card, filtroAtivo === 'resolvidas' ? styles.cardBlue : styles.cardWhite]} 
-          onPress={() => setFiltroAtivo('resolvidas')} 
+        <TouchableOpacity
+          style={[styles.card, filtroAtivo === 'resolvidas' ? styles.cardRed : styles.cardWhite]}
+          onPress={() => setFiltroAtivo('resolvidas')}
           activeOpacity={0.8}
         >
           <Ionicons name="checkmark-circle" size={22} color={filtroAtivo === 'resolvidas' ? '#fff' : '#16a34a'} style={{ marginBottom: 8 }} />
@@ -90,7 +90,7 @@ export default function HomeScreen({ navigation }) {
 
       <ScrollView
         contentContainerStyle={styles.content}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#4361ee" />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor="#EF1D26" />}
       >
         <TouchableOpacity
           style={styles.ctaButton}
@@ -99,18 +99,18 @@ export default function HomeScreen({ navigation }) {
         >
           <View style={styles.ctaLeft}>
             <View style={styles.ctaIcon}>
-              <Ionicons name="add-circle" size={28} color="#4361ee" />
+              <Ionicons name="add-circle" size={28} color="#EF1D26" />
             </View>
             <View>
               <Text style={styles.ctaTitle}>Registrar Ocorrência</Text>
               <Text style={styles.ctaSubtitle}>Relate um problema rapidamente</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color="#4361ee" />
+          <Ionicons name="chevron-forward" size={20} color="#EF1D26" />
         </TouchableOpacity>
 
         {loading ? (
-          <ActivityIndicator style={{ marginTop: 40 }} color="#4361ee" />
+          <ActivityIndicator style={{ marginTop: 40 }} color="#EF1D26" />
         ) : ocorrenciasList.length > 0 ? (
           <View style={styles.listSection}>
             <View style={styles.sectionHeader}>
@@ -132,7 +132,7 @@ export default function HomeScreen({ navigation }) {
                   activeOpacity={0.7}
                 >
                   {hasPhoto ? (
-                    <Image source={{ uri: photoUrl }} style={[styles.listItemIcon, { backgroundColor: '#f1f5f9' }]} />
+                    <Image source={{ uri: photoUrl }} style={[styles.listItemIcon, { backgroundColor: '#EEEEEE' }]} />
                   ) : (
                     <View style={[styles.listItemIcon, { backgroundColor: cfg.bg }]}>
                       <Ionicons name={cfg.icon} size={18} color={cfg.color} />
@@ -162,15 +162,15 @@ export default function HomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
+  container: { flex: 1, backgroundColor: '#F8F8F8' },
   header: {
-    backgroundColor: '#1a1a2e', paddingHorizontal: 24, paddingBottom: 56,
+    backgroundColor: '#232323', paddingHorizontal: 24, paddingBottom: 56,
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
   },
-  greetingSmall: { color: '#94a3b8', fontSize: 13, marginBottom: 4 },
+  greetingSmall: { color: '#999999', fontSize: 13, marginBottom: 4 },
   greetingName: { color: '#fff', fontSize: 22, fontWeight: '800' },
   avatarSmall: {
-    width: 44, height: 44, borderRadius: 22, backgroundColor: '#4361ee',
+    width: 44, height: 44, borderRadius: 22, backgroundColor: '#EF1D26',
     alignItems: 'center', justifyContent: 'center',
   },
   avatarSmallText: { color: '#fff', fontWeight: '800', fontSize: 18 },
@@ -183,29 +183,29 @@ const styles = StyleSheet.create({
     elevation: 4, shadowColor: '#000', shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08, shadowRadius: 8,
   },
-  cardBlue: { backgroundColor: '#4361ee' },
+  cardRed: { backgroundColor: '#EF1D26' },
   cardWhite: { backgroundColor: '#fff' },
   cardNumber: { fontSize: 22, fontWeight: '800', color: '#fff', marginBottom: 2 },
   cardLabelWhite: { fontSize: 11, color: 'rgba(255,255,255,0.8)', fontWeight: '500' },
-  cardLabelGray: { fontSize: 11, color: '#64748b', fontWeight: '500' },
+  cardLabelGray: { fontSize: 11, color: '#666666', fontWeight: '500' },
   content: { paddingHorizontal: 20, paddingBottom: 30 },
   ctaButton: {
     backgroundColor: '#fff', borderRadius: 16, padding: 18, marginBottom: 28,
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    elevation: 2, shadowColor: '#4361ee', shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08, shadowRadius: 8, borderWidth: 1.5, borderColor: '#eef0ff',
+    elevation: 2, shadowColor: '#EF1D26', shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08, shadowRadius: 8, borderWidth: 1.5, borderColor: '#FFEEEE',
   },
   ctaLeft: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   ctaIcon: {
-    width: 48, height: 48, borderRadius: 14, backgroundColor: '#eef0ff',
+    width: 48, height: 48, borderRadius: 14, backgroundColor: '#FFEEEE',
     alignItems: 'center', justifyContent: 'center',
   },
-  ctaTitle: { fontSize: 15, fontWeight: '700', color: '#1e293b', marginBottom: 2 },
-  ctaSubtitle: { fontSize: 12, color: '#64748b' },
+  ctaTitle: { fontSize: 15, fontWeight: '700', color: '#232323', marginBottom: 2 },
+  ctaSubtitle: { fontSize: 12, color: '#666666' },
   listSection: {},
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#1a1a2e' },
-  sectionLink: { fontSize: 13, color: '#4361ee', fontWeight: '600' },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#232323' },
+  sectionLink: { fontSize: 13, color: '#EF1D26', fontWeight: '600' },
   listItem: {
     backgroundColor: '#fff', borderRadius: 14, padding: 16, marginBottom: 10,
     flexDirection: 'row', alignItems: 'center', gap: 14,
@@ -216,10 +216,10 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: 12, alignItems: 'center', justifyContent: 'center',
   },
   listItemContent: { flex: 1 },
-  itemTitle: { fontSize: 14, fontWeight: '700', color: '#1e293b', marginBottom: 3 },
-  itemSub: { fontSize: 12, color: '#64748b' },
+  itemTitle: { fontSize: 14, fontWeight: '700', color: '#232323', marginBottom: 3 },
+  itemSub: { fontSize: 12, color: '#666666' },
   statusDot: { width: 8, height: 8, borderRadius: 4 },
   emptyState: { alignItems: 'center', paddingVertical: 40, gap: 12 },
-  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#1e293b' },
-  emptySubtitle: { fontSize: 14, color: '#64748b', textAlign: 'center', paddingHorizontal: 20 },
+  emptyTitle: { fontSize: 18, fontWeight: '700', color: '#232323' },
+  emptySubtitle: { fontSize: 14, color: '#666666', textAlign: 'center', paddingHorizontal: 20 },
 });

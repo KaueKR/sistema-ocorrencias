@@ -12,18 +12,18 @@ import {
 } from '../services/ocorrenciasService';
 
 const STATUS_CONFIG = {
-  aberta:       { label: 'Aberta',       color: '#dc2626', bg: '#fef2f2', icon: 'alert-circle' },
-  em_analise:   { label: 'Em Análise',   color: '#d97706', bg: '#fffbeb', icon: 'time' },
+  aberta:       { label: 'Aberta',       color: '#EF1D26', bg: '#FFF0F0', icon: 'alert-circle' },
+  em_analise:   { label: 'Em Análise',   color: '#C78A00', bg: '#FFF8E7', icon: 'time' },
   em_andamento: { label: 'Em Andamento', color: '#2563eb', bg: '#eff6ff', icon: 'construct' },
   resolvida:    { label: 'Resolvida',    color: '#16a34a', bg: '#f0fdf4', icon: 'checkmark-circle' },
-  cancelada:    { label: 'Cancelada',    color: '#64748b', bg: '#f8fafc', icon: 'close-circle' },
-  encerrada:    { label: 'Encerrada',    color: '#64748b', bg: '#f8fafc', icon: 'archive' },
+  cancelada:    { label: 'Cancelada',    color: '#666666', bg: '#F8F8F8', icon: 'close-circle' },
+  encerrada:    { label: 'Encerrada',    color: '#666666', bg: '#F8F8F8', icon: 'archive' },
 };
 
 const URGENCY_CONFIG = {
   baixa: { color: '#16a34a', bg: '#f0fdf4', icon: 'chevron-down-circle', label: 'Baixa' },
-  media: { color: '#d97706', bg: '#fffbeb', icon: 'remove-circle',       label: 'Média' },
-  alta:  { color: '#dc2626', bg: '#fef2f2', icon: 'arrow-up-circle',     label: 'Alta' },
+  media: { color: '#C78A00', bg: '#FFF8E7', icon: 'remove-circle',       label: 'Média' },
+  alta:  { color: '#EF1D26', bg: '#FFF0F0', icon: 'arrow-up-circle',     label: 'Alta' },
 };
 
 export default function DetalheOcorrenciaScreen({ route, navigation }) {
@@ -145,10 +145,10 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
     );
   };
 
-  if (loading) return <ActivityIndicator style={{ flex: 1 }} size="large" color="#4361ee" />;
+  if (loading) return <ActivityIndicator style={{ flex: 1 }} size="large" color="#EF1D26" />;
   if (!data) return (
     <View style={styles.errorContainer}>
-      <Ionicons name="alert-circle" size={48} color="#e2e8f0" />
+      <Ionicons name="alert-circle" size={48} color="#DDDDDD" />
       <Text style={styles.errorText}>Ocorrência não encontrada.</Text>
     </View>
   );
@@ -165,7 +165,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
   const canDelete = isOwner && data.status === 'aberta';
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#f9fafb'}}>
+    <View style={{ flex: 1, backgroundColor: '#F8F8F8'}}>
       <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: isClosed ? 40 : 160 }}>
 
         <View style={[styles.statusBanner, { backgroundColor: status.bg }]}>
@@ -180,21 +180,21 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
           <View style={styles.infoGrid}>
             <View style={styles.infoItem}>
               <View style={styles.infoIconRow}>
-                <Ionicons name="pricetag-outline" size={14} color="#64748b" style={{ marginRight: 4 }} />
+                <Ionicons name="pricetag-outline" size={14} color="#666666" style={{ marginRight: 4 }} />
                 <Text style={styles.infoLabel}>Categoria</Text>
               </View>
               <Text style={styles.infoValue}>{data.categorias?.nome || '—'}</Text>
             </View>
             <View style={styles.infoItem}>
               <View style={styles.infoIconRow}>
-                <Ionicons name="business-outline" size={14} color="#64748b" style={{ marginRight: 4 }} />
+                <Ionicons name="business-outline" size={14} color="#666666" style={{ marginRight: 4 }} />
                 <Text style={styles.infoLabel}>Setor</Text>
               </View>
               <Text style={styles.infoValue}>{data.setores?.nome || '—'}</Text>
             </View>
             <View style={styles.infoItem}>
               <View style={styles.infoIconRow}>
-                <Ionicons name="location-outline" size={14} color="#64748b" style={{ marginRight: 4 }} />
+                <Ionicons name="location-outline" size={14} color="#666666" style={{ marginRight: 4 }} />
                 <Text style={styles.infoLabel}>Local</Text>
               </View>
               <Text style={styles.infoValue}>{data.local || '—'}</Text>
@@ -277,7 +277,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
               disabled={actionLoading}
               activeOpacity={0.8}
             >
-              <Ionicons name="refresh" size={18} color="#d97706" />
+              <Ionicons name="refresh" size={18} color="#C78A00" />
               <Text style={styles.actionBtnTextOrange}>Reabrir</Text>
             </TouchableOpacity>
           )}
@@ -289,7 +289,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
               disabled={actionLoading}
               activeOpacity={0.8}
             >
-              <Ionicons name="close-circle-outline" size={18} color="#64748b" />
+              <Ionicons name="close-circle-outline" size={18} color="#666666" />
               <Text style={styles.actionBtnTextGray}>Cancelar</Text>
             </TouchableOpacity>
           )}
@@ -301,7 +301,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
               disabled={actionLoading}
               activeOpacity={0.8}
             >
-              <Ionicons name="trash-outline" size={18} color="#dc2626" />
+              <Ionicons name="trash-outline" size={18} color="#EF1D26" />
             </TouchableOpacity>
           )}
         </View>
@@ -316,7 +316,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
-              <Ionicons name="close-circle" size={32} color="#64748b" />
+              <Ionicons name="close-circle" size={32} color="#666666" />
               <Text style={styles.modalTitle}>Cancelar Ocorrência</Text>
               <Text style={styles.modalSubtitle}>Por que você deseja cancelar este chamado?</Text>
             </View>
@@ -324,7 +324,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
             <TextInput
               style={styles.modalInput}
               placeholder="Ex: Problema já foi resolvido internamente..."
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="#999999"
               multiline
               numberOfLines={3}
               textAlignVertical="top"
@@ -359,16 +359,16 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
+  container: { flex: 1, backgroundColor: '#F8F8F8' },
   errorContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 16 },
-  errorText: { color: '#94a3b8', fontSize: 16 },
+  errorText: { color: '#999999', fontSize: 16 },
   statusBanner: {
     flexDirection: 'row', alignItems: 'center', padding: 16, paddingHorizontal: 20,
   },
   statusBannerText: { fontSize: 14, fontWeight: '700', flex: 1 },
-  dateText: { fontSize: 12, color: '#94a3b8' },
+  dateText: { fontSize: 12, color: '#999999' },
   content: { padding: 20 },
-  title: { fontSize: 22, fontWeight: '800', color: '#1e293b', marginBottom: 20, lineHeight: 30 },
+  title: { fontSize: 22, fontWeight: '800', color: '#232323', marginBottom: 20, lineHeight: 30 },
   infoGrid: {
     flexDirection: 'row', flexWrap: 'wrap', gap: 12,
     backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 24,
@@ -377,20 +377,20 @@ const styles = StyleSheet.create({
   },
   infoItem: { width: '47%' },
   infoIconRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 4 },
-  infoLabel: { fontSize: 12, color: '#64748b' },
-  infoValue: { fontSize: 14, fontWeight: '700', color: '#1e293b' },
+  infoLabel: { fontSize: 12, color: '#666666' },
+  infoValue: { fontSize: 14, fontWeight: '700', color: '#232323' },
   urgencyBadge: {
     flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start',
   },
   urgencyText: { fontSize: 12, fontWeight: '700' },
   section: { marginBottom: 24 },
-  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#1e293b', marginBottom: 12 },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#232323', marginBottom: 12 },
   descriptionBox: {
     backgroundColor: '#fff', borderRadius: 12, padding: 16,
-    borderWidth: 1, borderColor: '#f1f5f9',
+    borderWidth: 1, borderColor: '#EEEEEE',
   },
-  description: { fontSize: 15, color: '#475569', lineHeight: 24 },
+  description: { fontSize: 15, color: '#555555', lineHeight: 24 },
   image: { width: '100%', height: 250, borderRadius: 16, resizeMode: 'cover' },
   timeline: {},
   timelineItem: { flexDirection: 'row' },
@@ -399,20 +399,20 @@ const styles = StyleSheet.create({
     width: 32, height: 32, borderRadius: 16,
     alignItems: 'center', justifyContent: 'center',
   },
-  timelineConnector: { width: 2, flex: 1, backgroundColor: '#e2e8f0', marginVertical: 4 },
+  timelineConnector: { width: 2, flex: 1, backgroundColor: '#DDDDDD', marginVertical: 4 },
   timelineContent: { flex: 1, paddingBottom: 20 },
-  timelineStatus: { fontSize: 14, fontWeight: '700', color: '#1e293b', marginBottom: 2 },
-  timelineUser: { fontSize: 12, color: '#64748b', marginBottom: 6 },
+  timelineStatus: { fontSize: 14, fontWeight: '700', color: '#232323', marginBottom: 2 },
+  timelineUser: { fontSize: 12, color: '#666666', marginBottom: 6 },
   timelineObs: {
-    backgroundColor: '#f8fafc', borderRadius: 8, padding: 10,
-    borderLeftWidth: 3, borderLeftColor: '#e2e8f0',
+    backgroundColor: '#F8F8F8', borderRadius: 8, padding: 10,
+    borderLeftWidth: 3, borderLeftColor: '#DDDDDD',
   },
-  timelineObsText: { fontSize: 13, color: '#475569', fontStyle: 'italic' },
+  timelineObsText: { fontSize: 13, color: '#555555', fontStyle: 'italic' },
 
   // --- Action Bar ---
   actionBar: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
-    backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#f1f5f9',
+    backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#EEEEEE',
     paddingHorizontal: 20, paddingTop: 14, paddingBottom: 34,
     flexDirection: 'row', gap: 10, alignItems: 'center',
     elevation: 10, shadowColor: '#000', shadowOffset: { width: 0, height: -3 },
@@ -426,18 +426,18 @@ const styles = StyleSheet.create({
     flex: 1, backgroundColor: '#16a34a', justifyContent: 'center',
   },
   actionReopen: {
-    backgroundColor: '#fffbeb', borderWidth: 1.5, borderColor: '#fde68a',
+    backgroundColor: '#FFF8E7', borderWidth: 1.5, borderColor: '#FFE4A0',
   },
   actionCancel: {
-    backgroundColor: '#f8fafc', borderWidth: 1.5, borderColor: '#e2e8f0',
+    backgroundColor: '#F8F8F8', borderWidth: 1.5, borderColor: '#DDDDDD',
   },
   actionDelete: {
-    backgroundColor: '#fef2f2', borderWidth: 1.5, borderColor: '#fecaca',
+    backgroundColor: '#FFF0F0', borderWidth: 1.5, borderColor: '#FFBBBB',
     paddingHorizontal: 14,
   },
   actionBtnTextWhite: { color: '#fff', fontWeight: '700', fontSize: 14 },
-  actionBtnTextOrange: { color: '#d97706', fontWeight: '700', fontSize: 13 },
-  actionBtnTextGray: { color: '#64748b', fontWeight: '600', fontSize: 13 },
+  actionBtnTextOrange: { color: '#C78A00', fontWeight: '700', fontSize: 13 },
+  actionBtnTextGray: { color: '#666666', fontWeight: '600', fontSize: 13 },
 
   modalOverlay: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
@@ -448,22 +448,22 @@ const styles = StyleSheet.create({
     padding: 28, paddingBottom: 40,
   },
   modalHeader: { alignItems: 'center', marginBottom: 24, gap: 8 },
-  modalTitle: { fontSize: 20, fontWeight: '800', color: '#1e293b' },
-  modalSubtitle: { fontSize: 14, color: '#64748b', textAlign: 'center' },
+  modalTitle: { fontSize: 20, fontWeight: '800', color: '#232323' },
+  modalSubtitle: { fontSize: 14, color: '#666666', textAlign: 'center' },
   modalInput: {
-    backgroundColor: '#f8fafc', borderWidth: 1.5, borderColor: '#e2e8f0',
-    borderRadius: 12, padding: 16, fontSize: 15, color: '#1e293b',
+    backgroundColor: '#F8F8F8', borderWidth: 1.5, borderColor: '#DDDDDD',
+    borderRadius: 12, padding: 16, fontSize: 15, color: '#232323',
     height: 100, marginBottom: 20,
   },
   modalActions: { flexDirection: 'row', gap: 12 },
   modalBtnSecondary: {
     flex: 1, paddingVertical: 14, borderRadius: 12,
-    alignItems: 'center', backgroundColor: '#f1f5f9',
+    alignItems: 'center', backgroundColor: '#EEEEEE',
   },
-  modalBtnSecondaryText: { color: '#64748b', fontWeight: '700', fontSize: 15 },
+  modalBtnSecondaryText: { color: '#666666', fontWeight: '700', fontSize: 15 },
   modalBtnPrimary: {
     flex: 2, paddingVertical: 14, borderRadius: 12,
-    alignItems: 'center', backgroundColor: '#64748b',
+    alignItems: 'center', backgroundColor: '#666666',
   },
   modalBtnPrimaryText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });

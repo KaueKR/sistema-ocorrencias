@@ -73,11 +73,11 @@ export default function ForgotPasswordScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f8faff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#F8F8F8" />
       <ScrollView contentContainerStyle={[styles.inner, { paddingTop: insets.top + 16 }]} keyboardShouldPersistTaps="handled">
 
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#1e293b" />
+          <Ionicons name="arrow-back" size={24} color="#232323" />
         </TouchableOpacity>
 
         <Text style={styles.title}>Recuperar Senha</Text>
@@ -96,7 +96,7 @@ export default function ForgotPasswordScreen({ navigation }) {
                   ]}>
                     {isDone
                       ? <Ionicons name="checkmark" size={14} color="#fff" />
-                      : <Ionicons name={s.icon} size={14} color={isActive ? '#fff' : '#94a3b8'} />
+                      : <Ionicons name={s.icon} size={14} color={isActive ? '#fff' : '#999999'} />
                     }
                   </View>
                   <Text style={[styles.stepLabel, isActive && styles.stepLabelActive]}>{s.label}</Text>
@@ -118,7 +118,7 @@ export default function ForgotPasswordScreen({ navigation }) {
         <View style={styles.form}>
           {error ? (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle" size={16} color="#c62828" style={{ marginRight: 8 }} />
+              <Ionicons name="alert-circle" size={16} color="#CC2229" style={{ marginRight: 8 }} />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
@@ -126,11 +126,11 @@ export default function ForgotPasswordScreen({ navigation }) {
           {step === 'EMAIL' && (
             <>
               <View style={styles.inputWrapper}>
-                <Ionicons name="mail-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+                <Ionicons name="mail-outline" size={20} color="#999999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="E-mail cadastrado"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#999999"
                   keyboardType="email-address"
                   autoCapitalize="none"
                   value={email}
@@ -151,15 +151,15 @@ export default function ForgotPasswordScreen({ navigation }) {
           {step === 'TOKEN' && (
             <>
               <View style={styles.tokenInfo}>
-                <Ionicons name="information-circle" size={18} color="#4361ee" style={{ marginRight: 8 }} />
+                <Ionicons name="information-circle" size={18} color="#EF1D26" style={{ marginRight: 8 }} />
                 <Text style={styles.tokenInfoText}>Verifique seu e-mail: <Text style={{ fontWeight: '700' }}>{email}</Text></Text>
               </View>
               <View style={styles.inputWrapper}>
-                <Ionicons name="key-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+                <Ionicons name="key-outline" size={20} color="#999999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Cole o código aqui"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#999999"
                   value={token}
                   onChangeText={(t) => { setToken(t); setError(''); }}
                   autoCapitalize="none"
@@ -179,17 +179,17 @@ export default function ForgotPasswordScreen({ navigation }) {
           {step === 'NEW_PASSWORD' && (
             <>
               <View style={styles.inputWrapper}>
-                <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color="#999999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Nova Senha"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#999999"
                   secureTextEntry={!showPassword}
                   value={password}
                   onChangeText={(t) => { setPassword(t); setError(''); }}
                 />
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-                  <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+                  <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#999999" />
                 </TouchableOpacity>
               </View>
               {password.length > 0 && (
@@ -201,29 +201,29 @@ export default function ForgotPasswordScreen({ navigation }) {
                     { ok: hasSpecialChar, label: 'Caractere especial' },
                   ].map((rule, i) => (
                     <View key={i} style={styles.ruleRow}>
-                      <Ionicons name={rule.ok ? 'checkmark-circle' : 'ellipse-outline'} size={15} color={rule.ok ? '#16a34a' : '#94a3b8'} style={{ marginRight: 8 }} />
+                      <Ionicons name={rule.ok ? 'checkmark-circle' : 'ellipse-outline'} size={15} color={rule.ok ? '#16a34a' : '#999999'} style={{ marginRight: 8 }} />
                       <Text style={[styles.ruleText, rule.ok ? styles.ruleMet : styles.ruleUnmet]}>{rule.label}</Text>
                     </View>
                   ))}
                 </View>
               )}
               <View style={[styles.inputWrapper, confirmPassword.length > 0 && password !== confirmPassword && styles.inputWrapperError]}>
-                <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+                <Ionicons name="lock-closed-outline" size={20} color="#999999" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="Confirmar Nova Senha"
-                  placeholderTextColor="#94a3b8"
+                  placeholderTextColor="#999999"
                   secureTextEntry={!showConfirm}
                   value={confirmPassword}
                   onChangeText={(t) => { setConfirmPassword(t); setError(''); }}
                 />
                 <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)} style={styles.eyeIcon}>
-                  <Ionicons name={showConfirm ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+                  <Ionicons name={showConfirm ? 'eye-off-outline' : 'eye-outline'} size={20} color="#999999" />
                 </TouchableOpacity>
               </View>
               {confirmPassword.length > 0 && password !== confirmPassword && (
                 <View style={styles.matchErrorRow}>
-                  <Ionicons name="close-circle" size={14} color="#e53935" style={{ marginRight: 4 }} />
+                  <Ionicons name="close-circle" size={14} color="#EF1D26" style={{ marginRight: 4 }} />
                   <Text style={styles.matchErrorText}>As senhas não coincidem</Text>
                 </View>
               )}
@@ -239,7 +239,7 @@ export default function ForgotPasswordScreen({ navigation }) {
           )}
 
           <TouchableOpacity style={styles.loginLink} onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={14} color="#4361ee" style={{ marginRight: 4 }} />
+            <Ionicons name="arrow-back" size={14} color="#EF1D26" style={{ marginRight: 4 }} />
             <Text style={styles.loginLinkText}>Voltar para o <Text style={styles.loginLinkHighlight}>Login</Text></Text>
           </TouchableOpacity>
         </View>
@@ -249,41 +249,41 @@ export default function ForgotPasswordScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8faff' },
+  container: { flex: 1, backgroundColor: '#F8F8F8' },
   inner: { flexGrow: 1, paddingHorizontal: 28, paddingBottom: 40 },
   backBtn: { marginBottom: 16, alignSelf: 'flex-start', padding: 4 },
-  title: { fontSize: 28, fontWeight: '800', color: '#1a1a2e', marginBottom: 24 },
+  title: { fontSize: 28, fontWeight: '800', color: '#232323', marginBottom: 24 },
   stepper: { flexDirection: 'row', alignItems: 'center', marginBottom: 24 },
   stepItem: { alignItems: 'center' },
   stepCircle: {
-    width: 32, height: 32, borderRadius: 16, backgroundColor: '#e2e8f0',
+    width: 32, height: 32, borderRadius: 16, backgroundColor: '#DDDDDD',
     alignItems: 'center', justifyContent: 'center', marginBottom: 6,
   },
-  stepCircleActive: { backgroundColor: '#4361ee' },
+  stepCircleActive: { backgroundColor: '#EF1D26' },
   stepCircleDone: { backgroundColor: '#16a34a' },
-  stepLabel: { fontSize: 11, color: '#94a3b8', fontWeight: '500' },
-  stepLabelActive: { color: '#4361ee', fontWeight: '700' },
-  stepLine: { flex: 1, height: 2, backgroundColor: '#e2e8f0', marginBottom: 20, marginHorizontal: 4 },
+  stepLabel: { fontSize: 11, color: '#999999', fontWeight: '500' },
+  stepLabelActive: { color: '#EF1D26', fontWeight: '700' },
+  stepLine: { flex: 1, height: 2, backgroundColor: '#DDDDDD', marginBottom: 20, marginHorizontal: 4 },
   stepLineDone: { backgroundColor: '#16a34a' },
-  subtitle: { fontSize: 14, color: '#64748b', marginBottom: 20 },
+  subtitle: { fontSize: 14, color: '#666666', marginBottom: 20 },
   form: { gap: 14 },
   errorContainer: {
-    backgroundColor: '#fdecea', borderRadius: 10, padding: 12,
-    borderLeftWidth: 4, borderLeftColor: '#e53935', flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#FFF0F0', borderRadius: 10, padding: 12,
+    borderLeftWidth: 4, borderLeftColor: '#EF1D26', flexDirection: 'row', alignItems: 'center',
   },
-  errorText: { color: '#c62828', fontSize: 13, flex: 1 },
+  errorText: { color: '#CC2229', fontSize: 13, flex: 1 },
   tokenInfo: {
-    backgroundColor: '#eef0ff', borderRadius: 10, padding: 12,
+    backgroundColor: '#FFEEEE', borderRadius: 10, padding: 12,
     flexDirection: 'row', alignItems: 'center',
   },
-  tokenInfoText: { color: '#4361ee', fontSize: 13, flex: 1 },
+  tokenInfoText: { color: '#EF1D26', fontSize: 13, flex: 1 },
   inputWrapper: {
-    backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#e2e8f0', borderRadius: 12,
+    backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#DDDDDD', borderRadius: 12,
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14,
   },
-  inputWrapperError: { borderColor: '#e53935' },
+  inputWrapperError: { borderColor: '#EF1D26' },
   inputIcon: { marginRight: 10 },
-  input: { flex: 1, paddingVertical: 15, fontSize: 15, color: '#1e293b' },
+  input: { flex: 1, paddingVertical: 15, fontSize: 15, color: '#232323' },
   eyeIcon: { padding: 4 },
   passwordRulesContainer: {
     backgroundColor: '#f0fdf4', borderRadius: 10, padding: 14,
@@ -292,15 +292,15 @@ const styles = StyleSheet.create({
   ruleRow: { flexDirection: 'row', alignItems: 'center' },
   ruleText: { fontSize: 13 },
   ruleMet: { color: '#15803d', fontWeight: '500' },
-  ruleUnmet: { color: '#64748b' },
+  ruleUnmet: { color: '#666666' },
   matchErrorRow: { flexDirection: 'row', alignItems: 'center', marginTop: -6 },
-  matchErrorText: { color: '#e53935', fontSize: 13 },
+  matchErrorText: { color: '#EF1D26', fontSize: 13 },
   button: {
-    backgroundColor: '#4361ee', borderRadius: 12, paddingVertical: 16,
+    backgroundColor: '#EF1D26', borderRadius: 12, paddingVertical: 16,
     alignItems: 'center', flexDirection: 'row', justifyContent: 'center',
   },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   loginLink: { alignItems: 'center', marginTop: 4, flexDirection: 'row', justifyContent: 'center' },
-  loginLinkText: { color: '#64748b', fontSize: 14 },
-  loginLinkHighlight: { color: '#4361ee', fontWeight: '700' },
+  loginLinkText: { color: '#666666', fontSize: 14 },
+  loginLinkHighlight: { color: '#EF1D26', fontWeight: '700' },
 });

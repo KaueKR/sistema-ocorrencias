@@ -28,7 +28,7 @@ export default function PerfilScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+      <StatusBar barStyle="light-content" backgroundColor="#232323" />
 
       <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
         <View style={styles.avatarWrapper}>
@@ -40,7 +40,7 @@ export default function PerfilScreen() {
         <Text style={styles.name}>{nomeCompleto}</Text>
         <Text style={styles.email}>{email}</Text>
         <View style={styles.badge}>
-          <Ionicons name="shield-checkmark" size={12} color="#4361ee" style={{ marginRight: 4 }} />
+          <Ionicons name="shield-checkmark" size={12} color="#EF1D26" style={{ marginRight: 4 }} />
           <Text style={styles.badgeText}>{tipo}</Text>
         </View>
       </View>
@@ -50,21 +50,21 @@ export default function PerfilScreen() {
           {MENU_ITEMS.map((item, i) => (
             <TouchableOpacity key={i} style={styles.menuItem} activeOpacity={0.7}>
               <View style={styles.menuIconWrapper}>
-                <Ionicons name={item.icon} size={20} color="#4361ee" />
+                <Ionicons name={item.icon} size={20} color="#EF1D26" />
               </View>
               <Text style={styles.menuLabel}>{item.label}</Text>
-              <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+              <Ionicons name="chevron-forward" size={18} color="#CCCCCC" />
             </TouchableOpacity>
           ))}
         </View>
 
         <View style={[styles.menuGroup, { marginTop: 16 }]}>
           <TouchableOpacity style={styles.menuItem} onPress={handleSair} activeOpacity={0.7}>
-            <View style={[styles.menuIconWrapper, { backgroundColor: '#fef2f2' }]}>
-              <Ionicons name="log-out-outline" size={20} color="#dc2626" />
+            <View style={[styles.menuIconWrapper, { backgroundColor: '#FFF0F0' }]}>
+              <Ionicons name="log-out-outline" size={20} color="#EF1D26" />
             </View>
-            <Text style={[styles.menuLabel, { color: '#dc2626' }]}>Sair da Conta</Text>
-            <Ionicons name="chevron-forward" size={18} color="#fecaca" />
+            <Text style={[styles.menuLabel, { color: '#EF1D26' }]}>Sair da Conta</Text>
+            <Ionicons name="chevron-forward" size={18} color="#FFBBBB" />
           </TouchableOpacity>
         </View>
 
@@ -77,14 +77,14 @@ export default function PerfilScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f9fafb' },
+  container: { flex: 1, backgroundColor: '#F8F8F8' },
   header: {
-    backgroundColor: '#1a1a2e', alignItems: 'center',
+    backgroundColor: '#232323', alignItems: 'center',
     paddingBottom: 32, paddingHorizontal: 20,
   },
   avatarWrapper: { position: 'relative', marginBottom: 14 },
   avatar: {
-    width: 84, height: 84, borderRadius: 42, backgroundColor: '#4361ee',
+    width: 84, height: 84, borderRadius: 42, backgroundColor: '#EF1D26',
     alignItems: 'center', justifyContent: 'center',
     borderWidth: 3, borderColor: 'rgba(255,255,255,0.15)',
   },
@@ -92,15 +92,15 @@ const styles = StyleSheet.create({
   onlineDot: {
     position: 'absolute', bottom: 2, right: 2,
     width: 16, height: 16, borderRadius: 8,
-    backgroundColor: '#22c55e', borderWidth: 2, borderColor: '#1a1a2e',
+    backgroundColor: '#22c55e', borderWidth: 2, borderColor: '#232323',
   },
   name: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 4 },
-  email: { color: '#64748b', fontSize: 13, marginBottom: 12 },
+  email: { color: '#666666', fontSize: 13, marginBottom: 12 },
   badge: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: 'rgba(67,97,238,0.2)', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+    backgroundColor: 'rgba(239,29,38,0.15)', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
   },
-  badgeText: { color: '#818cf8', fontSize: 12, fontWeight: '600' },
+  badgeText: { color: '#EF1D26', fontSize: 12, fontWeight: '600' },
   content: { padding: 20, paddingBottom: 40 },
   menuGroup: {
     backgroundColor: '#fff', borderRadius: 16, overflow: 'hidden',
@@ -109,13 +109,13 @@ const styles = StyleSheet.create({
   },
   menuItem: {
     flexDirection: 'row', alignItems: 'center', padding: 16,
-    borderBottomWidth: 1, borderBottomColor: '#f8fafc', gap: 14,
+    borderBottomWidth: 1, borderBottomColor: '#F8F8F8', gap: 14,
   },
   menuIconWrapper: {
-    width: 38, height: 38, borderRadius: 10, backgroundColor: '#eef0ff',
+    width: 38, height: 38, borderRadius: 10, backgroundColor: '#FFEEEE',
     alignItems: 'center', justifyContent: 'center',
   },
-  menuLabel: { flex: 1, fontSize: 15, fontWeight: '600', color: '#1e293b' },
+  menuLabel: { flex: 1, fontSize: 15, fontWeight: '600', color: '#232323' },
   footer: { alignItems: 'center', marginTop: 32 },
-  footerText: { fontSize: 12, color: '#94a3b8' },
+  footerText: { fontSize: 12, color: '#999999' },
 });

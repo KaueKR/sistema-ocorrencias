@@ -50,11 +50,11 @@ export default function RegisterScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <StatusBar barStyle="dark-content" backgroundColor="#f8faff" />
+      <StatusBar barStyle="dark-content" backgroundColor="#F8F8F8" />
       <ScrollView contentContainerStyle={[styles.inner, { paddingTop: insets.top + 20 }]} keyboardShouldPersistTaps="handled">
 
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#1e293b" />
+          <Ionicons name="arrow-back" size={24} color="#232323" />
         </TouchableOpacity>
 
         <View style={styles.header}>
@@ -65,17 +65,17 @@ export default function RegisterScreen({ navigation }) {
         <View style={styles.form}>
           {error ? (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle" size={16} color="#c62828" style={{ marginRight: 8 }} />
+              <Ionicons name="alert-circle" size={16} color="#CC2229" style={{ marginRight: 8 }} />
               <Text style={styles.errorText}>{error}</Text>
             </View>
           ) : null}
 
           <View style={styles.inputWrapper}>
-            <Ionicons name="person-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+            <Ionicons name="person-outline" size={20} color="#999999" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
               placeholder="Nome completo"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="#999999"
               value={name}
               onChangeText={(t) => { setName(t); setError(''); }}
               autoCapitalize="words"
@@ -83,11 +83,11 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
           <View style={styles.inputWrapper}>
-            <Ionicons name="mail-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+            <Ionicons name="mail-outline" size={20} color="#999999" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
               placeholder="E-mail"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="#999999"
               value={email}
               onChangeText={(t) => { setEmail(t); setError(''); }}
               keyboardType="email-address"
@@ -97,17 +97,17 @@ export default function RegisterScreen({ navigation }) {
           </View>
 
           <View style={styles.inputWrapper}>
-            <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+            <Ionicons name="lock-closed-outline" size={20} color="#999999" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
               placeholder="Senha"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="#999999"
               value={password}
               onChangeText={(t) => { setPassword(t); setError(''); }}
               secureTextEntry={!showPassword}
             />
             <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeIcon}>
-              <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+              <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={20} color="#999999" />
             </TouchableOpacity>
           </View>
 
@@ -123,7 +123,7 @@ export default function RegisterScreen({ navigation }) {
                   <Ionicons
                     name={rule.ok ? 'checkmark-circle' : 'ellipse-outline'}
                     size={16}
-                    color={rule.ok ? '#16a34a' : '#94a3b8'}
+                    color={rule.ok ? '#16a34a' : '#999999'}
                     style={{ marginRight: 8 }}
                   />
                   <Text style={[styles.ruleText, rule.ok ? styles.ruleMet : styles.ruleUnmet]}>
@@ -138,22 +138,22 @@ export default function RegisterScreen({ navigation }) {
             styles.inputWrapper,
             confirmPassword.length > 0 && password !== confirmPassword && styles.inputWrapperError
           ]}>
-            <Ionicons name="lock-closed-outline" size={20} color="#94a3b8" style={styles.inputIcon} />
+            <Ionicons name="lock-closed-outline" size={20} color="#999999" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
               placeholder="Confirmar senha"
-              placeholderTextColor="#94a3b8"
+              placeholderTextColor="#999999"
               value={confirmPassword}
               onChangeText={(t) => { setConfirmPassword(t); setError(''); }}
               secureTextEntry={!showConfirm}
             />
             <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)} style={styles.eyeIcon}>
-              <Ionicons name={showConfirm ? 'eye-off-outline' : 'eye-outline'} size={20} color="#94a3b8" />
+              <Ionicons name={showConfirm ? 'eye-off-outline' : 'eye-outline'} size={20} color="#999999" />
             </TouchableOpacity>
           </View>
           {confirmPassword.length > 0 && password !== confirmPassword && (
             <View style={styles.matchErrorRow}>
-              <Ionicons name="close-circle" size={14} color="#e53935" style={{ marginRight: 4 }} />
+              <Ionicons name="close-circle" size={14} color="#EF1D26" style={{ marginRight: 4 }} />
               <Text style={styles.matchErrorText}>As senhas não coincidem</Text>
             </View>
           )}
@@ -183,25 +183,25 @@ export default function RegisterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8faff' },
+  container: { flex: 1, backgroundColor: '#F8F8F8' },
   inner: { flexGrow: 1, paddingHorizontal: 28, paddingBottom: 40 },
   backBtn: { marginBottom: 16, alignSelf: 'flex-start', padding: 4 },
   header: { marginBottom: 32 },
-  title: { fontSize: 30, fontWeight: '800', color: '#1a1a2e', marginBottom: 6 },
-  subtitle: { fontSize: 15, color: '#64748b' },
+  title: { fontSize: 30, fontWeight: '800', color: '#232323', marginBottom: 6 },
+  subtitle: { fontSize: 15, color: '#666666' },
   form: { gap: 14 },
   errorContainer: {
-    backgroundColor: '#fdecea', borderRadius: 10, padding: 12,
-    borderLeftWidth: 4, borderLeftColor: '#e53935', flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#FFF0F0', borderRadius: 10, padding: 12,
+    borderLeftWidth: 4, borderLeftColor: '#EF1D26', flexDirection: 'row', alignItems: 'center',
   },
-  errorText: { color: '#c62828', fontSize: 13, flex: 1 },
+  errorText: { color: '#CC2229', fontSize: 13, flex: 1 },
   inputWrapper: {
-    backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#e2e8f0', borderRadius: 12,
+    backgroundColor: '#fff', borderWidth: 1.5, borderColor: '#DDDDDD', borderRadius: 12,
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14,
   },
-  inputWrapperError: { borderColor: '#e53935' },
+  inputWrapperError: { borderColor: '#EF1D26' },
   inputIcon: { marginRight: 10 },
-  input: { flex: 1, paddingVertical: 15, fontSize: 15, color: '#1e293b' },
+  input: { flex: 1, paddingVertical: 15, fontSize: 15, color: '#232323' },
   eyeIcon: { padding: 4 },
   passwordRulesContainer: {
     backgroundColor: '#f0fdf4', borderRadius: 10, padding: 14,
@@ -210,16 +210,16 @@ const styles = StyleSheet.create({
   ruleRow: { flexDirection: 'row', alignItems: 'center' },
   ruleText: { fontSize: 13 },
   ruleMet: { color: '#15803d', fontWeight: '500' },
-  ruleUnmet: { color: '#64748b' },
+  ruleUnmet: { color: '#666666' },
   matchErrorRow: { flexDirection: 'row', alignItems: 'center', marginTop: -6 },
-  matchErrorText: { color: '#e53935', fontSize: 13 },
+  matchErrorText: { color: '#EF1D26', fontSize: 13 },
   button: {
-    backgroundColor: '#4361ee', borderRadius: 12, paddingVertical: 16,
+    backgroundColor: '#EF1D26', borderRadius: 12, paddingVertical: 16,
     alignItems: 'center', marginTop: 4, flexDirection: 'row', justifyContent: 'center',
   },
-  buttonDisabled: { backgroundColor: '#a0aec0' },
+  buttonDisabled: { backgroundColor: '#AAAAAA' },
   buttonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   loginLink: { alignItems: 'center', marginTop: 4 },
-  loginLinkText: { color: '#64748b', fontSize: 14 },
-  loginLinkHighlight: { color: '#4361ee', fontWeight: '700' },
+  loginLinkText: { color: '#666666', fontSize: 14 },
+  loginLinkHighlight: { color: '#EF1D26', fontWeight: '700' },
 });

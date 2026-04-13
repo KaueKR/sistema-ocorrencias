@@ -61,7 +61,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
             <Ionicons
               name={iconName}
               size={24}
-              color={isFocused ? '#4361ee' : '#94a3b8'}
+              color={isFocused ? '#EF1D26' : '#999999'}
             />
             <View style={[styles.tabLabel, isFocused && styles.tabLabelActive]}>
               {/* Label como linha ativa embaixo */}
@@ -93,7 +93,7 @@ export default function AppNavigator() {
   if (carregando) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Ionicons name="reload" size={40} color="#4361ee" />
+        <Ionicons name="reload" size={40} color="#EF1D26" />
       </View>
     );
   }
@@ -116,9 +116,9 @@ export default function AppNavigator() {
               headerShown: true,
               title: 'Detalhes',
               headerBackTitleVisible: false,
-              headerTintColor: '#4361ee',
+              headerTintColor: '#EF1D26',
               headerShadowVisible: false,
-              headerStyle: { backgroundColor: '#f9fafb' },
+              headerStyle: { backgroundColor: '#F8F8F8' },
             }}
           />
         </>
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     backgroundColor: '#ffffff',
     borderTopWidth: 1,
-    borderTopColor: '#f1f5f9',
+    borderTopColor: '#EEEEEE',
     paddingTop: 10,
     elevation: 8,
     shadowColor: '#000',
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   tabLabelActive: {
-    backgroundColor: '#4361ee',
+    backgroundColor: '#EF1D26',
   },
   fabWrapper: {
     flex: 1,
@@ -166,11 +166,11 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#4361ee',
+    backgroundColor: '#EF1D26',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 6,
-    shadowColor: '#4361ee',
+    shadowColor: '#EF1D26',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,

@@ -1,0 +1,121 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, StatusBar, ScrollView } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import { useAuth } from '../contexts/AuthContext';
+
+const MENU_ITEMS = [
+  { icon: 'person-outline',       label: 'Meus Dados',    danger: false },
+  { icon: 'lock-closed-outline',  label: 'Alterar Senha', danger: false },
+  { icon: 'help-circle-outline',  label: 'Suporte',       danger: false },
+];
+
+export default function PerfilScreen() {
+  const { usuario, sair } = useAuth();
+  const insets = useSafeAreaInsets();
+
+  const nomeCompleto = usuario?.user_metadata?.nome_completo || 'Usuário';
+  const email = usuario?.email || '';
+  const tipo = usuario?.user_metadata?.tipo_usuario || 'Usuário';
+  const iniciais = nomeCompleto.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+
+  const handleSair = () => {
+    Alert.alert('Sair', 'Tem certeza que deseja desconectar?', [
+      { text: 'Cancelar', style: 'cancel' },
+      { text: 'Sair', style: 'destructive', onPress: sair },
+    ]);
+  };
+
+  return (
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="#1a1a2e" />
+
+      <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
+        <View style={styles.avatarWrapper}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>{iniciais}</Text>
+          </View>
+          <View style={styles.onlineDot} />
+        </View>
+        <Text style={styles.name}>{nomeCompleto}</Text>
+        <Text style={styles.email}>{email}</Text>
+        <View style={styles.badge}>
+          <Ionicons name="shield-checkmark" size={12} color="#4361ee" style={{ marginRight: 4 }} />
+          <Text style={styles.badgeText}>{tipo}</Text>
+        </View>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.content}>
+        <View style={styles.menuGroup}>
+          {MENU_ITEMS.map((item, i) => (
+            <TouchableOpacity key={i} style={styles.menuItem} activeOpacity={0.7}>
+              <View style={styles.menuIconWrapper}>
+                <Ionicons name={item.icon} size={20} color="#4361ee" />
+              </View>
+              <Text style={styles.menuLabel}>{item.label}</Text>
+              <Ionicons name="chevron-forward" size={18} color="#cbd5e1" />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <View style={[styles.menuGroup, { marginTop: 16 }]}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleSair} activeOpacity={0.7}>
+            <View style={[styles.menuIconWrapper, { backgroundColor: '#fef2f2' }]}>
+              <Ionicons name="log-out-outline" size={20} color="#dc2626" />
+            </View>
+            <Text style={[styles.menuLabel, { color: '#dc2626' }]}>Sair da Conta</Text>
+            <Ionicons name="chevron-forward" size={18} color="#fecaca" />
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>Sistema de Ocorrências • v1.0.0</Text>
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: '#f9fafb' },
+  header: {
+    backgroundColor: '#1a1a2e', alignItems: 'center',
+    paddingBottom: 32, paddingHorizontal: 20,
+  },
+  avatarWrapper: { position: 'relative', marginBottom: 14 },
+  avatar: {
+    width: 84, height: 84, borderRadius: 42, backgroundColor: '#4361ee',
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 3, borderColor: 'rgba(255,255,255,0.15)',
+  },
+  avatarText: { fontSize: 30, color: '#fff', fontWeight: '800' },
+  onlineDot: {
+    position: 'absolute', bottom: 2, right: 2,
+    width: 16, height: 16, borderRadius: 8,
+    backgroundColor: '#22c55e', borderWidth: 2, borderColor: '#1a1a2e',
+  },
+  name: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 4 },
+  email: { color: '#64748b', fontSize: 13, marginBottom: 12 },
+  badge: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: 'rgba(67,97,238,0.2)', paddingHorizontal: 14, paddingVertical: 6, borderRadius: 20,
+  },
+  badgeText: { color: '#818cf8', fontSize: 12, fontWeight: '600' },
+  content: { padding: 20, paddingBottom: 40 },
+  menuGroup: {
+    backgroundColor: '#fff', borderRadius: 16, overflow: 'hidden',
+    elevation: 1, shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04, shadowRadius: 4,
+  },
+  menuItem: {
+    flexDirection: 'row', alignItems: 'center', padding: 16,
+    borderBottomWidth: 1, borderBottomColor: '#f8fafc', gap: 14,
+  },
+  menuIconWrapper: {
+    width: 38, height: 38, borderRadius: 10, backgroundColor: '#eef0ff',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  menuLabel: { flex: 1, fontSize: 15, fontWeight: '600', color: '#1e293b' },
+  footer: { alignItems: 'center', marginTop: 32 },
+  footerText: { fontSize: 12, color: '#94a3b8' },
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -15,6 +15,8 @@ import MinhasOcorrenciasScreen from '../screens/MinhasOcorrenciasScreen';
 import NovaOcorrenciaScreen from '../screens/NovaOcorrenciaScreen';
 import PerfilScreen from '../screens/PerfilScreen';
 import DetalheOcorrenciaScreen from '../screens/DetalheOcorrenciaScreen';
+import GestaoUsuariosScreen from '../screens/admin/GestaoUsuariosScreen';
+import DetalheUsuarioScreen from '../screens/admin/DetalheUsuarioScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -92,8 +94,8 @@ export default function AppNavigator() {
 
   if (carregando) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Ionicons name="reload" size={40} color="#EF1D26" />
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#F8F8F8' }}>
+        <ActivityIndicator size="large" color="#EF1D26" />
       </View>
     );
   }
@@ -120,6 +122,16 @@ export default function AppNavigator() {
               headerShadowVisible: false,
               headerStyle: { backgroundColor: '#F8F8F8' },
             }}
+          />
+          <Stack.Screen
+            name="GestaoUsuarios"
+            component={GestaoUsuariosScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="DetalheUsuario"
+            component={DetalheUsuarioScreen}
+            options={{ headerShown: false }}
           />
         </>
       )}

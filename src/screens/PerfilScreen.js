@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert, StatusBar, ScrollView 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
+import { usePermissions } from '../hooks/usePermissions';
 
 const MENU_ITEMS = [
   { icon: 'person-outline',       label: 'Meus Dados',    danger: false },
@@ -10,13 +11,24 @@ const MENU_ITEMS = [
   { icon: 'help-circle-outline',  label: 'Suporte',       danger: false },
 ];
 
-export default function PerfilScreen() {
-  const { usuario, sair } = useAuth();
+const ROLE_LABELS = {
+  super_admin:         'Super Admin',
+  admin_institucional: 'Administrador',
+  gestor_setor:        'Gestor de Setor',
+  tecnico:             'Técnico',
+  professor:           'Professor',
+  aluno:               'Aluno',
+};
+
+export default function PerfilScreen({ navigation }) {
+  const { usuario, sair, roles } = useAuth();
+  const { isAdmin } = usePermissions();
   const insets = useSafeAreaInsets();
 
   const nomeCompleto = usuario?.user_metadata?.nome_completo || 'Usuário';
   const email = usuario?.email || '';
-  const tipo = usuario?.user_metadata?.tipo_usuario || 'Usuário';
+  const roleAtual = roles[0]?.nome || 'aluno';
+  const tipoLabel = ROLE_LABELS[roleAtual] || 'Usuário';
   const iniciais = nomeCompleto.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
 
   const handleSair = () => {
@@ -41,7 +53,7 @@ export default function PerfilScreen() {
         <Text style={styles.email}>{email}</Text>
         <View style={styles.badge}>
           <Ionicons name="shield-checkmark" size={12} color="#EF1D26" style={{ marginRight: 4 }} />
-          <Text style={styles.badgeText}>{tipo}</Text>
+          <Text style={styles.badgeText}>{tipoLabel}</Text>
         </View>
       </View>
 
@@ -57,6 +69,22 @@ export default function PerfilScreen() {
             </TouchableOpacity>
           ))}
         </View>
+
+        {isAdmin && (
+          <View style={[styles.menuGroup, { marginTop: 16 }]}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate('GestaoUsuarios')}
+              activeOpacity={0.7}
+            >
+              <View style={[styles.menuIconWrapper, { backgroundColor: '#f3e8ff' }]}>
+                <Ionicons name="shield-outline" size={20} color="#7c3aed" />
+              </View>
+              <Text style={styles.menuLabel}>Painel Administrativo</Text>
+              <Ionicons name="chevron-forward" size={18} color="#CCCCCC" />
+            </TouchableOpacity>
+          </View>
+        )}
 
         <View style={[styles.menuGroup, { marginTop: 16 }]}>
           <TouchableOpacity style={styles.menuItem} onPress={handleSair} activeOpacity={0.7}>

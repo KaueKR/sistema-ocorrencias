@@ -76,22 +76,24 @@ function UserCard({ item, onPress }) {
 
 export default function GestaoUsuariosScreen({ navigation }) {
   const insets = useSafeAreaInsets();
-  const [usuarios, setUsuarios] = useState([]);
+  // Todos os usuários sem filtro de role (fonte de verdade para contagens)
+  const [todosUsuarios, setTodosUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState('');
   const [filtroRole, setFiltroRole] = useState(null);
 
+  // Busca sempre sem filtro de role — o filtro é aplicado no cliente
   const carregar = useCallback(async () => {
     setLoading(true);
     try {
-      const data = await buscarUsuarios({ filtroRole, busca });
-      setUsuarios(data);
+      const data = await buscarUsuarios({ busca });
+      setTodosUsuarios(data);
     } catch (e) {
       console.error('Erro ao buscar usuários:', e);
     } finally {
       setLoading(false);
     }
-  }, [filtroRole, busca]);
+  }, [busca]);
 
   useFocusEffect(
     useCallback(() => {
@@ -100,15 +102,21 @@ export default function GestaoUsuariosScreen({ navigation }) {
     }, [carregar])
   );
 
-  // Conta usuários por role para exibir nos chips de filtro
+  // Filtro de role aplicado localmente — não dispara nova requisição
+  const usuarios = useMemo(() => {
+    if (!filtroRole) return todosUsuarios;
+    return todosUsuarios.filter(u => u.role_principal === filtroRole);
+  }, [todosUsuarios, filtroRole]);
+
+  // Contagem sempre calculada sobre TODOS os usuários, independente do filtro ativo
   const contagem = useMemo(() => {
-    const map = { total: usuarios.length };
-    usuarios.forEach(u => {
+    const map = { total: todosUsuarios.length };
+    todosUsuarios.forEach(u => {
       const k = u.role_principal || 'aluno';
       map[k] = (map[k] || 0) + 1;
     });
     return map;
-  }, [usuarios]);
+  }, [todosUsuarios]);
 
   return (
     <View style={styles.container}>

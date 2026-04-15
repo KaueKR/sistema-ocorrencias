@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
+import { usePermissions } from '../hooks/usePermissions';
 import {
   buscarOcorrenciaId,
   atualizarStatusOcorrencia,
@@ -28,6 +29,7 @@ const URGENCY_CONFIG = {
 
 export default function DetalheOcorrenciaScreen({ route, navigation }) {
   const { usuario } = useAuth();
+  const { can, hasRole } = usePermissions();
   const { ocorrenciaId } = route.params;
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -119,6 +121,31 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
     );
   };
 
+  const handleMarcarResolvida = () => {
+    Alert.alert(
+      'Marcar como Resolvida',
+      'Confirma que esta ocorrência foi resolvida?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sim, resolver',
+          onPress: async () => {
+            setActionLoading(true);
+            try {
+              await atualizarStatusOcorrencia(ocorrenciaId, 'resolvida', usuario.id, 'Marcada como resolvida pela equipe.', data.status);
+              await fetchData();
+              Alert.alert('Resolvida!', 'A ocorrência foi marcada como resolvida.');
+            } catch (err) {
+              Alert.alert('Erro', err.message);
+            } finally {
+              setActionLoading(false);
+            }
+          }
+        },
+      ]
+    );
+  };
+
   const handleExcluir = () => {
     Alert.alert(
       'Excluir Ocorrência',
@@ -159,14 +186,23 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
 
   const isOwner = data.usuario_id === usuario?.id;
   const isClosed = ['encerrada', 'cancelada'].includes(data.status);
-  const canCancel = isOwner && ['aberta', 'em_analise', 'em_andamento'].includes(data.status);
-  const canConclude = isOwner && !isClosed;
-  const canReopen = isOwner && data.status === 'resolvida';
-  const canDelete = isOwner && data.status === 'aberta';
+  const isAluno = hasRole('aluno');
+
+  const podeAtualizarStatus = can('ocorrencias.atualizar_status');
+  const podeCancelarQualquer = can('ocorrencias.cancelar_qualquer');
+  const podeDeletar = can('ocorrencias.deletar');
+
+  // Aluno é somente-leitura: pode criar e ver, nunca alterar status ou excluir
+  const canConclude = !isAluno && isOwner && !isClosed;
+  const canMarcarResolvida = !isAluno && !isOwner && podeAtualizarStatus && !isClosed && data.status !== 'resolvida';
+  const canReopen = !isAluno && isOwner && data.status === 'resolvida';
+  const canCancel = !isAluno && (isOwner || podeCancelarQualquer) && ['aberta', 'em_analise', 'em_andamento'].includes(data.status);
+  const canDelete = !isAluno && ((isOwner && data.status === 'aberta') || (podeDeletar && !isOwner));
+  const showActionBar = canConclude || canMarcarResolvida || canReopen || canCancel || canDelete;
 
   return (
     <View style={{ flex: 1, backgroundColor: '#F8F8F8'}}>
-      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: isClosed ? 40 : 160 }}>
+      <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: showActionBar ? 160 : 40 }}>
 
         <View style={[styles.statusBanner, { backgroundColor: status.bg }]}>
           <Ionicons name={status.icon} size={20} color={status.color} style={{ marginRight: 8 }} />
@@ -256,7 +292,7 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
         </View>
       </ScrollView>
 
-      {isOwner && !isClosed && (
+      {showActionBar && (
         <View style={styles.actionBar}>
           {canConclude && (
             <TouchableOpacity
@@ -267,6 +303,18 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
             >
               <Ionicons name="checkmark-circle" size={20} color="#fff" />
               <Text style={styles.actionBtnTextWhite}>Concluir Chamado</Text>
+            </TouchableOpacity>
+          )}
+
+          {canMarcarResolvida && (
+            <TouchableOpacity
+              style={[styles.actionBtn, styles.actionConfirm]}
+              onPress={handleMarcarResolvida}
+              disabled={actionLoading}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="checkmark-circle" size={20} color="#fff" />
+              <Text style={styles.actionBtnTextWhite}>Marcar Resolvida</Text>
             </TouchableOpacity>
           )}
 

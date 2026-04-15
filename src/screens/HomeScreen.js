@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ActivityIndicator,
   ScrollView, RefreshControl, StatusBar, Image
@@ -6,6 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
+import { usePermissions } from '../hooks/usePermissions';
 import { buscarOcorrencias } from '../services/ocorrenciasService';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -19,7 +20,8 @@ const STATUS_CONFIG = {
 };
 
 export default function HomeScreen({ navigation }) {
-  const { usuario } = useAuth();
+  const { usuario, perfilCarregado } = useAuth();
+  const { can } = usePermissions();
   const insets = useSafeAreaInsets();
   const [ocorrencias, setOcorrencias] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,8 +30,8 @@ export default function HomeScreen({ navigation }) {
 
   const carregarOcorrencias = async () => {
     try {
-      if (!usuario) return;
-      const data = await buscarOcorrencias();
+      if (!usuario || !perfilCarregado) return;
+      const data = await buscarOcorrencias(null, can('ocorrencias.ver_restrito'));
       setOcorrencias(data || []);
     } catch (error) {
       console.log('Erro ao buscar dashboard:', error);
@@ -39,7 +41,13 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  useFocusEffect(useCallback(() => { carregarOcorrencias(); }, [usuario]));
+  // Dispara assim que o perfil e as permissões terminam de carregar
+  useEffect(() => {
+    if (perfilCarregado && usuario) carregarOcorrencias();
+  }, [perfilCarregado]);
+
+  // Re-executa quando o usuário navega de volta para a tela
+  useFocusEffect(useCallback(() => { carregarOcorrencias(); }, [perfilCarregado]));
 
   const onRefresh = () => { setRefreshing(true); carregarOcorrencias(); };
 

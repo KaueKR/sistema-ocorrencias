@@ -59,7 +59,15 @@ async function uploadFoto(ocorrenciaId, base64Data) {
   }
 }
 
-export async function buscarOcorrencias(userId = null) {
+export async function buscarOcorrencias(userId = null, podVerRestrito = true) {
+  // Defesa em camadas: se o usuário não pode ver categorias restritas, usamos
+  // INNER JOIN (!inner) para que o PostgREST exclua automaticamente as
+  // ocorrências cuja categoria foi bloqueada pela RLS de categorias.
+  // A RLS no banco já é a barreira principal; este filtro é a camada secundária.
+  const joinCategorias = podVerRestrito
+    ? 'categorias (nome, icone)'
+    : 'categorias!inner (nome, icone)';
+
   let query = supabase
     .from('ocorrencias')
     .select(`
@@ -69,13 +77,17 @@ export async function buscarOcorrencias(userId = null) {
       urgencia,
       criado_em,
       usuario_id,
-      categorias (nome, icone),
+      ${joinCategorias},
       fotos_ocorrencias (url)
     `)
     .order('criado_em', { ascending: false });
 
   if (userId) {
     query = query.eq('usuario_id', userId);
+  }
+
+  if (!podVerRestrito) {
+    query = query.eq('categorias.restrito', false);
   }
 
   const { data, error } = await query;
@@ -110,8 +122,7 @@ export async function atualizarStatusOcorrencia(ocorrenciaId, novoStatus, userId
   const { error: updateError } = await supabase
     .from('ocorrencias')
     .update({ status: novoStatus })
-    .eq('id', ocorrenciaId)
-    .eq('usuario_id', userId);
+    .eq('id', ocorrenciaId);
 
   if (updateError) throw updateError;
 
@@ -145,8 +156,7 @@ export async function excluirOcorrencia(ocorrenciaId, userId) {
   const { error } = await supabase
     .from('ocorrencias')
     .delete()
-    .eq('id', ocorrenciaId)
-    .eq('usuario_id', userId);
+    .eq('id', ocorrenciaId);
 
   if (error) throw error;
 }

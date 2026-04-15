@@ -9,15 +9,17 @@ export function AuthProvider({ children }) {
   const [carregando, setCarregando] = useState(true);
 
   // Estado RBAC
-  const [perfil,     setPerfil]     = useState(null);
-  const [roles,      setRoles]      = useState([]);
-  const [permissoes, setPermissoes] = useState([]);
+  const [perfil,          setPerfil]          = useState(null);
+  const [roles,           setRoles]           = useState([]);
+  const [permissoes,      setPermissoes]      = useState([]);
+  const [perfilCarregado, setPerfilCarregado] = useState(false);
 
   /**
    * Carrega o perfil do usuário junto com suas roles e permissões.
    * Chamado automaticamente no login e na inicialização da sessão.
    */
   const carregarPerfil = useCallback(async (userId) => {
+    setPerfilCarregado(false);
     if (!userId) return;
     try {
       // 1. Dados básicos do perfil
@@ -71,6 +73,8 @@ export function AuthProvider({ children }) {
       setPermissoes([...permissoesSet]);
     } catch (error) {
       console.error('Erro ao carregar perfil:', error.message);
+    } finally {
+      setPerfilCarregado(true);
     }
   }, []);
 
@@ -78,6 +82,7 @@ export function AuthProvider({ children }) {
     setPerfil(null);
     setRoles([]);
     setPermissoes([]);
+    setPerfilCarregado(false);
   }, []);
 
   useEffect(() => {
@@ -155,6 +160,7 @@ export function AuthProvider({ children }) {
         perfil,
         roles,
         permissoes,
+        perfilCarregado,
         carregarPerfil,
       }}
     >

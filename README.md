@@ -17,8 +17,9 @@ Aplicativo mobile para registro, encaminhamento e acompanhamento de ocorrências
 9. [Executando o Projeto](#9-executando-o-projeto)
 10. [Navegação e Telas](#10-navegação-e-telas)
 11. [Sistema de Roles e Permissões (RBAC)](#11-sistema-de-roles-e-permissões-rbac)
-12. [Arquitetura e Padrões](#12-arquitetura-e-padrões)
-13. [Padrão de Commits](#13-padrão-de-commits)
+12. [Regras de Visibilidade de Ocorrências](#12-regras-de-visibilidade-de-ocorrências)
+13. [Arquitetura e Padrões](#13-arquitetura-e-padrões)
+14. [Padrão de Commits](#14-padrão-de-commits)
 
 ---
 
@@ -26,7 +27,7 @@ Aplicativo mobile para registro, encaminhamento e acompanhamento de ocorrências
 
 O **Sistema de Ocorrências** é um aplicativo mobile desenvolvido com **React Native + Expo** para facilitar o registro e o gerenciamento de problemas em instituições de ensino. O back-end é inteiramente baseado no **Supabase**, responsável pela autenticação de usuários, banco de dados PostgreSQL e armazenamento de fotos.
 
-O objetivo é criar um fluxo simples e eficiente onde o usuário registra um problema e o sistema o direciona automaticamente ao setor responsável — com controle de acesso hierárquico baseado em perfis (RBAC).
+O objetivo é criar um fluxo simples e eficiente onde o usuário registra um problema e o sistema o direciona automaticamente ao setor responsável — com controle de acesso hierárquico baseado em perfis (RBAC) e restrições de visibilidade por categoria de ocorrência.
 
 ### Fluxo de trabalho
 
@@ -48,9 +49,14 @@ O usuário abre uma ocorrência informando título, local, categoria, descriçã
 
 ### Ocorrências
 - **Criar ocorrência** — título, local, categoria, descrição, grau de urgência (Baixa/Média/Alta) e foto (câmera ou galeria)
-- **Listar ocorrências** — todas as ocorrências ou somente as do usuário logado
+- **Listar ocorrências** — todas as ocorrências visíveis ao perfil do usuário (filtradas por RLS + frontend)
 - **Visualizar detalhes** — informações completas com histórico de status e observações
 - **Gerenciar status** — concluir, reabrir, cancelar (com motivo) ou excluir uma ocorrência
+
+### Visibilidade restrita por categoria
+A categoria **"Problema com Aluno"** é marcada como restrita (`restrito = true`) no banco de dados. Usuários com os perfis `aluno`, `tecnico` e `gestor_setor` **não conseguem visualizar** ocorrências dessa categoria em nenhuma tela nem acessá-las diretamente por ID. O bloqueio é aplicado em duas camadas:
+- **Banco de dados:** políticas RLS na tabela `ocorrencias` e `categorias`
+- **Frontend:** filtro via `!inner join` na função `buscarOcorrencias` antes da query chegar ao banco
 
 ### Ciclo de status
 
@@ -61,7 +67,7 @@ Aberta → Em Análise → Em Andamento → Resolvida → Encerrada
 
 ### Dashboard
 - Painel inicial com contadores de ocorrências abertas e resolvidas
-- Lista das 5 ocorrências mais recentes com miniatura da foto
+- Lista das ocorrências mais recentes com miniatura da foto
 - Atalho para criar nova ocorrência
 - Atualização por gesto de pull-to-refresh
 
@@ -87,6 +93,7 @@ Aberta → Em Análise → Em Andamento → Resolvida → Encerrada
 | Runtime | Node.js | 24.14.1 |
 | Framework mobile | Expo | ~54.0.33 |
 | UI | React Native | 0.81.5 |
+| Web (Expo Web) | react-native-web / react-dom | ^0.21.0 / 19.1.0 |
 | Navegação | React Navigation (Native Stack + Bottom Tabs) | ^7.x |
 | Backend / Banco de dados | Supabase | ^2.103.0 |
 | Autenticação | Supabase Auth | — |
@@ -94,9 +101,11 @@ Aberta → Em Análise → Em Andamento → Resolvida → Encerrada
 | Armazenamento local | AsyncStorage | 2.2.0 |
 | Seletor de imagem | expo-image-picker | ~17.0.10 |
 | Acesso a arquivos | expo-file-system | ~19.0.21 |
+| Polyfill de URL (Supabase) | react-native-url-polyfill | ^3.0.0 |
 | Ícones | Ionicons (via Expo) | — |
 | Safe Area | react-native-safe-area-context | ~5.6.0 |
 | Conversão de imagem | base64-arraybuffer | ^1.0.2 |
+| Túnel de desenvolvimento | @expo/ngrok | ^4.1.3 |
 
 ---
 
@@ -114,12 +123,13 @@ O banco de dados PostgreSQL do Supabase armazena todas as ocorrências, categori
 As fotos anexadas às ocorrências são enviadas em formato Base64 e armazenadas no **Supabase Storage**, dentro do bucket `fotos-ocorrencias`. A URL pública gerada é salva no banco de dados e usada para exibição no app.
 
 ### Funções PostgreSQL (RPC)
-Duas funções auxiliares são definidas com `SECURITY DEFINER` para operar com privilégios elevados sem expor dados sensíveis:
+Todas as funções auxiliares são definidas com `SECURITY DEFINER` para operar com privilégios elevados sem expor dados sensíveis e evitar recursão infinita nas políticas RLS:
 
 | Função | Descrição |
 |---|---|
 | `tem_permissao(codigo)` | Retorna `boolean` indicando se o usuário logado possui uma permissão |
 | `nivel_minimo_usuario()` | Retorna o nível hierárquico mais alto do usuário (menor número = maior autoridade) |
+| `categoria_e_restrita(categoria_id)` | Retorna `boolean` indicando se uma categoria tem `restrito = true`; usada nas políticas RLS de `ocorrencias` |
 | `atribuir_role_usuario(perfil_id, role_id, setor_id)` | Troca de role atômica com validação de hierarquia |
 
 ### Triggers automáticos
@@ -134,7 +144,7 @@ Duas funções auxiliares são definidas com `SECURITY DEFINER` para operar com 
 |---|---|
 | **Auth** | Login, cadastro e recuperação de senha |
 | **PostgreSQL** | Ocorrências, categorias, setores, histórico, perfis e RBAC |
-| **Row Level Security (RLS)** | Controle de acesso por usuário e por role |
+| **Row Level Security (RLS)** | Controle de acesso por usuário, por role e por categoria restrita |
 | **Storage** | Upload e exibição de fotos das ocorrências |
 | **RPC (Funções)** | Operações atômicas e verificações de permissão |
 | **Triggers** | Automação de role padrão e cache de role_principal |
@@ -148,7 +158,7 @@ Duas funções auxiliares são definidas com `SECURITY DEFINER` para operar com 
 sistema-ocorrencias/
 ├── src/
 │   ├── contexts/
-│   │   └── AuthContext.js              # Estado global de autenticação + RBAC
+│   │   └── AuthContext.js              # Estado global de autenticação + RBAC + perfilCarregado
 │   ├── hooks/
 │   │   └── usePermissions.js           # Hook para verificação de permissões e roles
 │   ├── components/
@@ -169,7 +179,7 @@ sistema-ocorrencias/
 │   │       └── DetalheUsuarioScreen.js # Painel: edição de role e setor do usuário
 │   ├── services/
 │   │   ├── supabase.js                 # Inicialização do cliente Supabase
-│   │   ├── ocorrenciasService.js       # CRUD de ocorrências e upload de fotos
+│   │   ├── ocorrenciasService.js       # CRUD de ocorrências, upload de fotos, filtro por permissão
 │   │   ├── categoriasService.js        # Busca de categorias e setores
 │   │   └── adminService.js             # Operações do painel administrativo
 │   └── utils/
@@ -177,10 +187,14 @@ sistema-ocorrencias/
 ├── sql/
 │   ├── 03_permissoes_usuario.sql       # RLS: permissões do usuário sobre suas ocorrências
 │   ├── 04_criar_bucket_fotos.sql       # Bucket de fotos no Supabase Storage
-│   ├── 05_visibilidade_global.sql      # Visibilidade pública de ocorrências
+│   ├── 05_visibilidade_global.sql      # Visibilidade inicial de ocorrências (substituída pelo 13)
 │   ├── 06_sistema_roles.sql            # Tabelas, funções, RLS e seed do sistema RBAC
 │   ├── 07_trigger_role_padrao.sql      # Trigger de role padrão + RPC de troca atômica
-│   └── 08_rls_perfis_admin.sql         # RLS da tabela perfis para acesso de admins
+│   ├── 08_rls_perfis_admin.sql         # RLS da tabela perfis para acesso de admins
+│   ├── 09_rls_fotos_global.sql         # RLS da tabela fotos_ocorrencias
+│   ├── 13_fix_definitivo.sql           # Fix completo: categoria restrita + RLS final (executar após 09)
+│   ├── 14_diagnostico_rls.sql          # Queries de diagnóstico do estado das políticas RLS
+│   └── 15_correcao_categoria_restrita.sql # Correção do nome e da política conflitante em categorias
 ├── assets/
 │   ├── icon.png
 │   ├── splash-icon.png
@@ -243,10 +257,33 @@ Execute os scripts SQL localizados na pasta `sql/` no editor SQL do Supabase (**
 |---|---|---|
 | 1 | `03_permissoes_usuario.sql` | Políticas RLS para ações do usuário sobre suas ocorrências |
 | 2 | `04_criar_bucket_fotos.sql` | Bucket de armazenamento para fotos |
-| 3 | `05_visibilidade_global.sql` | Visibilidade global de ocorrências para autenticados |
+| 3 | `05_visibilidade_global.sql` | Visibilidade inicial de ocorrências (será substituída pelo passo 6) |
 | 4 | `06_sistema_roles.sql` | Sistema completo de RBAC (tabelas, funções, RLS, seed) |
 | 5 | `07_trigger_role_padrao.sql` | Trigger de role padrão + função RPC de troca atômica |
 | 6 | `08_rls_perfis_admin.sql` | Políticas RLS da tabela `perfis` para o painel admin |
+| 7 | `09_rls_fotos_global.sql` | Políticas RLS da tabela `fotos_ocorrencias` |
+| 8 | `13_fix_definitivo.sql` | **Obrigatório:** define a categoria restrita, permissão `ver_restrito`, funções e RLS definitivas |
+| 9 | `15_correcao_categoria_restrita.sql` | Marca "Problema com Aluno" como `restrito = true` e remove política conflitante |
+
+> **Nota:** os arquivos `10`, `11` e `12` foram substituídos pelo `13_fix_definitivo.sql`, que consolida todas as correções de forma idempotente. Os arquivos `14` e `15` são utilitários de diagnóstico e correção — não precisam ser executados em novos projetos, apenas em instâncias que passaram por tentativas de configuração anteriores.
+
+### Verificando a configuração
+
+Após executar todos os scripts, rode as queries do arquivo `14_diagnostico_rls.sql` para confirmar o estado correto do banco:
+
+```sql
+-- Deve retornar "Problema com Aluno" com restrito = true
+SELECT nome, restrito FROM categorias ORDER BY restrito DESC, nome;
+
+-- Deve listar apenas as políticas corretas em ocorrencias (sem "Permitir leitura global")
+SELECT policyname, cmd FROM pg_policies WHERE tablename = 'ocorrencias' ORDER BY cmd, policyname;
+
+-- Deve retornar super_admin, admin_institucional e professor com ver_restrito
+SELECT r.nome, p.codigo FROM role_permissoes rp
+JOIN roles r ON r.id = rp.role_id
+JOIN permissoes p ON p.id = rp.permissao_id
+WHERE p.codigo = 'ocorrencias.ver_restrito';
+```
 
 ### Atribuindo o primeiro Super Admin
 
@@ -275,7 +312,7 @@ O trigger `trg_atualizar_role_principal` atualizará o campo `role_principal` au
 | `role_permissoes` | Mapeamento de quais permissões cada role possui |
 | `perfil_roles` | Associação usuário ↔ role com escopo de setor opcional |
 | `setores` | Setores responsáveis (Manutenção, TI, Secretaria etc.) |
-| `categorias` | Categorias de problemas vinculadas a setores |
+| `categorias` | Categorias de problemas; campo `restrito` controla visibilidade por perfil |
 | `ocorrencias` | Registros de ocorrências |
 | `fotos_ocorrencias` | Referências às fotos armazenadas no Storage |
 | `historico_status` | Trilha de auditoria completa das mudanças de status |
@@ -299,6 +336,8 @@ npm run web
 ```
 
 Após executar `npm start`, escaneie o QR Code exibido no terminal com o aplicativo **Expo Go** para rodar no seu celular.
+
+> **Dica:** use `npm start -- --tunnel` (requer `@expo/ngrok`) para testar em dispositivos físicos fora da mesma rede Wi-Fi.
 
 ---
 
@@ -347,18 +386,21 @@ App
 - Saudação com o primeiro nome do usuário
 - Cards clicáveis de resumo: **Em Aberto** e **Resolvidas**
 - Botão de atalho para nova ocorrência
-- Lista das 5 ocorrências mais recentes com foto em miniatura e badge de status colorido
+- Lista das ocorrências mais recentes com foto em miniatura e badge de status colorido
+- Exibe apenas ocorrências visíveis ao perfil do usuário (filtra categorias restritas automaticamente)
 - Pull-to-refresh
 
 #### MinhasOcorrenciasScreen (Mural de Ocorrências)
 - Lista completa com o total de ocorrências no título
 - Toggle de filtro: **Todas** / **Minhas**
 - Card com borda lateral colorida por status, badge de urgência e categoria
+- Categorias restritas são ocultadas automaticamente para perfis sem permissão
 - Pull-to-refresh
 
 #### NovaOcorrenciaScreen
 - Campos obrigatórios: título, local, categoria e descrição
 - Seletor de categoria em chips horizontais com exibição do setor associado
+- A categoria "Problema com Aluno" não aparece para usuários sem permissão `ocorrencias.ver_restrito`
 - Seletor de urgência com cores: Baixa / Média / Alta
 - Upload de foto via câmera ou galeria (armazenada no Supabase Storage)
 - Prévia da foto com opção de remoção antes do envio
@@ -371,6 +413,7 @@ App
   - **Reabrir** — disponível quando status é `resolvida`
   - **Cancelar** — abre modal para inserção do motivo
   - **Excluir** — remove ocorrência e fotos (somente dono e somente se `aberta`)
+- Acesso direto por ID bloqueado pelo RLS para categorias restritas
 
 #### PerfilScreen
 - Avatar com iniciais e indicador de online
@@ -428,8 +471,8 @@ O aplicativo implementa um controle de acesso baseado em roles (**Role-Based Acc
 | 2 | `admin_institucional` | Administrador | Coordenação/Direção. Gerencia usuários e visualiza todos os relatórios. |
 | 3 | `gestor_setor` | Gestor de Setor | Responsável por um setor. Gerencia ocorrências do seu setor. |
 | 4 | `tecnico` | Técnico / Funcionário | Executor que atualiza status das ocorrências do seu setor. |
-| 5 | `professor` | Professor | Docente. Cria e acompanha suas próprias ocorrências. |
-| 6 | `aluno` | Aluno | Estudante. Cria e visualiza apenas suas próprias ocorrências. |
+| 5 | `professor` | Professor | Docente. Cria, acompanha e visualiza ocorrências da categoria restrita. |
+| 6 | `aluno` | Aluno | Estudante. Cria e visualiza apenas suas próprias ocorrências (sem acesso a categorias restritas). |
 
 > **Regra de hierarquia:** um usuário só pode atribuir ou remover roles com nível **estritamente maior** que o seu. Um `admin_institucional` (nível 2) pode gerenciar roles de nível 3 a 6, mas nunca outro nível 2 ou o `super_admin`.
 
@@ -437,11 +480,13 @@ O aplicativo implementa um controle de acesso baseado em roles (**Role-Based Acc
 
 | Módulo | Permissões disponíveis |
 |---|---|
-| `ocorrencias` | `criar`, `ver_proprias`, `ver_setor`, `ver_todas`, `atualizar_status`, `cancelar_qualquer`, `deletar` |
+| `ocorrencias` | `criar`, `ver_proprias`, `ver_setor`, `ver_todas`, `ver_restrito`, `atualizar_status`, `cancelar_qualquer`, `deletar` |
 | `usuarios` | `ver`, `criar`, `editar`, `deletar`, `gerenciar_roles` |
 | `setores` | `ver`, `gerenciar` |
 | `relatorios` | `ver`, `exportar` |
 | `sistema` | `configurar` |
+
+> **`ocorrencias.ver_restrito`** — permissão especial que autoriza visualizar ocorrências da categoria "Problema com Aluno". Atribuída apenas a `super_admin`, `admin_institucional` e `professor`.
 
 ### Matriz de permissões por role
 
@@ -451,6 +496,7 @@ O aplicativo implementa um controle de acesso baseado em roles (**Role-Based Acc
 | `ocorrencias.ver_proprias` | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | `ocorrencias.ver_setor` | ✓ | ✓ | ✓ | ✓ | — | — |
 | `ocorrencias.ver_todas` | ✓ | ✓ | — | — | — | — |
+| `ocorrencias.ver_restrito` | ✓ | ✓ | — | — | ✓ | — |
 | `ocorrencias.atualizar_status` | ✓ | ✓ | ✓ | ✓ | — | — |
 | `ocorrencias.cancelar_qualquer` | ✓ | ✓ | — | — | — | — |
 | `ocorrencias.deletar` | ✓ | — | — | — | — | — |
@@ -462,10 +508,11 @@ O aplicativo implementa um controle de acesso baseado em roles (**Role-Based Acc
 
 ### Como o RBAC funciona no app
 
-1. **No login**, o `AuthContext` carrega do banco: perfil do usuário, array de roles e array de códigos de permissão — tudo em uma única query aninhada.
-2. O hook `usePermissions()` expõe helpers reativos derivados desse contexto.
-3. O componente `<PermissionGuard>` usa esses helpers para renderizar ou omitir elementos da UI.
-4. As políticas de **Row Level Security** no banco garantem a segurança real — as verificações no cliente são apenas otimizações de UX.
+1. **No login**, o `AuthContext` inicia `carregarPerfil()` assincronamente, buscando perfil, roles e permissões em uma única query aninhada.
+2. A flag `perfilCarregado` no contexto permanece `false` durante o carregamento e vira `true` apenas quando a query completa — garantindo que as telas nunca busquem dados com permissões vazias.
+3. O hook `usePermissions()` expõe helpers reativos derivados do contexto.
+4. O componente `<PermissionGuard>` usa esses helpers para renderizar ou omitir elementos da UI.
+5. As políticas de **Row Level Security** no banco garantem a segurança real — as verificações no cliente são camada de UX e defesa secundária.
 
 ```jsx
 // Exemplo de uso do PermissionGuard
@@ -475,7 +522,7 @@ O aplicativo implementa um controle de acesso baseado em roles (**Role-Based Acc
 
 // Exemplo de uso do hook
 const { can, isAdmin, canManageRole } = usePermissions();
-if (can('relatorios.exportar')) { ... }
+if (can('ocorrencias.ver_restrito')) { ... }
 ```
 
 ### Escopo por setor
@@ -484,7 +531,101 @@ Roles de nível 3 e 4 (`gestor_setor`, `tecnico`) podem ser vinculadas a um seto
 
 ---
 
-## 12. Arquitetura e Padrões
+## 12. Regras de Visibilidade de Ocorrências
+
+### Categoria restrita: "Problema com Aluno"
+
+A tabela `categorias` possui o campo `restrito (boolean)`. Quando `restrito = true`, a categoria e todas as ocorrências vinculadas ficam invisíveis para perfis sem a permissão `ocorrencias.ver_restrito`.
+
+| Perfil | Vê categorias restritas? | Vê ocorrências restritas? |
+|---|:---:|:---:|
+| `super_admin` | ✓ | ✓ |
+| `admin_institucional` | ✓ | ✓ |
+| `professor` | ✓ | ✓ |
+| `gestor_setor` | — | — |
+| `tecnico` | — | — |
+| `aluno` | — | — |
+
+### Camadas de bloqueio
+
+O bloqueio é aplicado em **duas camadas independentes**, de modo que uma falha em uma não compromete a outra:
+
+#### Camada 1 — Banco de dados (RLS)
+
+Políticas na tabela `ocorrencias`:
+
+```sql
+-- Todos os autenticados veem ocorrências de categorias não restritas
+CREATE POLICY "ocorrencias_select_geral" ON ocorrencias FOR SELECT
+TO authenticated USING (NOT categoria_e_restrita(categoria_id));
+
+-- Somente quem tem ver_restrito vê ocorrências de qualquer categoria
+CREATE POLICY "ocorrencias_select_restrito" ON ocorrencias FOR SELECT
+TO authenticated USING (tem_permissao('ocorrencias.ver_restrito'));
+```
+
+Políticas na tabela `categorias`:
+
+```sql
+-- Todos os autenticados veem categorias não restritas
+CREATE POLICY "categorias_select_geral" ON categorias FOR SELECT
+TO authenticated USING (restrito = false);
+
+-- Somente quem tem ver_restrito vê a categoria "Problema com Aluno"
+CREATE POLICY "categorias_select_restrito" ON categorias FOR SELECT
+TO authenticated USING (tem_permissao('ocorrencias.ver_restrito'));
+```
+
+A função `categoria_e_restrita(categoria_id)` é definida com `SECURITY DEFINER`, garantindo que ela sempre consulte o valor real de `restrito` independentemente das políticas RLS ativas na sessão do usuário.
+
+#### Camada 2 — Frontend (service + INNER JOIN)
+
+A função `buscarOcorrencias` aceita o parâmetro `podVerRestrito`. Quando `false`, a query usa `!inner join` combinado com filtro na coluna `restrito`, excluindo categorias restritas antes mesmo de a resposta chegar ao cliente:
+
+```js
+// ocorrenciasService.js
+export async function buscarOcorrencias(userId = null, podVerRestrito = true) {
+  const joinCategorias = podVerRestrito
+    ? 'categorias (nome, icone)'
+    : 'categorias!inner (nome, icone)';       // INNER JOIN exclui linhas sem categoria visível
+
+  let query = supabase.from('ocorrencias').select(`..., ${joinCategorias}, ...`);
+
+  if (!podVerRestrito) {
+    query = query.eq('categorias.restrito', false); // filtro explícito na categoria
+  }
+  // ...
+}
+```
+
+As telas `HomeScreen` e `MinhasOcorrenciasScreen` passam a permissão do usuário:
+
+```js
+const data = await buscarOcorrencias(null, can('ocorrencias.ver_restrito'));
+```
+
+### Sincronização de permissões no carregamento
+
+Para evitar que o fetch ocorra antes de as permissões estarem disponíveis (race condition no login), o `AuthContext` expõe o estado `perfilCarregado`:
+
+```
+Login → carregarPerfil() inicia → perfilCarregado = false
+                                 → carregarPerfil() completa → perfilCarregado = true
+                                                              → useEffect dispara nas telas
+                                                              → buscarOcorrencias() com can() correto
+```
+
+As telas usam um `useEffect` dedicado para reagir à mudança de `perfilCarregado`, garantindo que o dado correto seja exibido sem necessidade de reload manual:
+
+```js
+useEffect(() => {
+  if (perfilCarregado && usuario) carregarOcorrencias();
+}, [perfilCarregado]);
+```
+
+---
+
+## 13. Arquitetura e Padrões
 
 ### Camadas da aplicação
 
@@ -511,10 +652,11 @@ As verificações de acesso são aplicadas em três níveis complementares:
 | Camada | Mecanismo | Onde age |
 |---|---|---|
 | **UI** | `PermissionGuard`, `usePermissions()` | Oculta botões e telas restritos |
+| **Serviço** | `buscarOcorrencias(podVerRestrito)` | Filtro via `!inner join` antes da query |
 | **Navegação** | Verificação de role em `AppNavigator` | Impede acesso a rotas admin |
-| **Banco de dados** | Row Level Security (RLS) | Rejeita queries não autorizadas |
+| **Banco de dados** | Row Level Security (RLS) | Rejeita queries não autorizadas — barreira definitiva |
 
-> A segurança real está no banco. As verificações de UI são apenas conforto visual.
+> A segurança real está no banco. As verificações de UI e serviço são defesa adicional e conforto visual.
 
 ### Convenções de código
 
@@ -528,15 +670,17 @@ As verificações de acesso são aplicadas em três níveis complementares:
 
 ### Decisões arquiteturais relevantes
 
-- **Filtro de role no cliente** — a listagem de usuários carrega todos e filtra localmente, garantindo que as contagens dos chips de filtro sejam sempre corretas sem múltiplas requisições ao banco.
+- **`perfilCarregado` no AuthContext** — flag booleana que evita race condition: as telas não fazem fetch enquanto `carregarPerfil` estiver em andamento. Resolve o problema de ocorrências restritas não aparecerem no primeiro carregamento para admins e professores.
+- **Filtro frontend com `!inner join`** — `buscarOcorrencias` usa INNER JOIN na tabela `categorias` quando `podVerRestrito = false`, excluindo automaticamente ocorrências cujas categorias estão ocultas pelo RLS, mesmo que a política `ocorrencias_select_geral` não esteja ativa.
+- **`SECURITY DEFINER` em funções RLS** — `tem_permissao`, `nivel_minimo_usuario` e `categoria_e_restrita` rodam com privilégios de superusuário, evitando recursão infinita e garantindo leitura correta do valor `restrito` independente do contexto RLS do usuário.
 - **`role_principal` desnormalizado** — campo cacheado em `perfis` atualizado por trigger, evitando JOINs custosos em queries simples de listagem.
 - **RPC atômica para troca de role** — a função `atribuir_role_usuario` encapsula DELETE + INSERT em uma única transação, prevenindo estados inconsistentes.
-- **`useFocusEffect` nas listas** — telas de listagem recarregam ao receber foco, garantindo dados atualizados ao retornar de telas de edição.
-- **Funções `SECURITY DEFINER`** — `tem_permissao` e `nivel_minimo_usuario` rodam com privilégios elevados para evitar recursão infinita nas políticas RLS que precisam consultar as próprias tabelas de roles.
+- **`useFocusEffect` + `useEffect`** — telas de listagem recarregam ao receber foco (para dados atualizados ao voltar de edições) e também ao detectar mudança em `perfilCarregado` (para dados corretos no carregamento inicial).
+- **Filtro de role no cliente** — a listagem de usuários carrega todos e filtra localmente, garantindo que as contagens dos chips de filtro sejam sempre corretas sem múltiplas requisições ao banco.
 
 ---
 
-## 13. Padrão de Commits
+## 14. Padrão de Commits
 
 Este projeto adota o padrão [Conventional Commits](https://www.conventionalcommits.org/):
 
@@ -554,5 +698,5 @@ Este projeto adota o padrão [Conventional Commits](https://www.conventionalcomm
 ```
 feat: adiciona upload de foto na tela de nova ocorrência
 fix: corrige validação de e-mail no login
-docs: atualiza README com sistema de roles e permissões
+docs: atualiza README com regras de visibilidade por perfil
 ```

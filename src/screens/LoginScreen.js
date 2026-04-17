@@ -32,8 +32,8 @@ export default function LoginScreen({ navigation }) {
     try {
       const { error: erroAuth } = await entrar(email, password);
       if (erroAuth) setError(traduzirErroSupabase(erroAuth.message));
-    } catch {
-      setError('Ocorreu um erro inesperado. Tente novamente.');
+    } catch (e) {
+      setError(traduzirErroSupabase(e?.message));
     } finally {
       setLoading(false);
     }

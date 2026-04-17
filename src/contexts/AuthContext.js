@@ -86,25 +86,18 @@ export function AuthProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    // Inicializa a sessão atual
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSessao(session);
-      setUsuario(session?.user ?? null);
-
-      if (session?.user) {
-        carregarPerfil(session.user.id).finally(() => setCarregando(false));
-      } else {
-        setCarregando(false);
-      }
-    });
-
-    // Escuta mudanças de auth (login, logout, refresh de token)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSessao(session);
         setUsuario(session?.user ?? null);
 
-        if (session?.user) {
+        if (event === 'INITIAL_SESSION') {
+          if (session?.user) {
+            carregarPerfil(session.user.id).finally(() => setCarregando(false));
+          } else {
+            setCarregando(false);
+          }
+        } else if (session?.user) {
           carregarPerfil(session.user.id);
         } else {
           limparPerfil();
@@ -128,7 +121,11 @@ export function AuthProvider({ children }) {
   }
 
   async function sair() {
-    return await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      await supabase.auth.signOut({ scope: 'local' });
+    }
   }
 
   async function enviarCodigoRecuperacao(email) {

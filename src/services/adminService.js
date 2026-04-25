@@ -62,24 +62,31 @@ export async function buscarSetores() {
 }
 
 /**
- * Atribui uma nova role a um usuário de forma atômica via RPC.
- * A função no banco valida hierarquia e permissões antes de executar.
- *
- * @param {string} perfilId   - UUID do perfil alvo
- * @param {string} roleId     - UUID da role a ser atribuída
- * @param {string|null} setorId - UUID do setor (obrigatório para gestor/tecnico)
+ * Atualiza a role principal do usuário.
+ * A Trigger no banco cuidará de atualizar a tabela perfil_roles automaticamente.
  */
-export async function atribuirRole({ perfilId, roleId, setorId = null }) {
-  const { data, error } = await supabase.rpc('atribuir_role_usuario', {
-    p_perfil_id: perfilId,
-    p_role_id:   roleId,
-    p_setor_id:  setorId,
-  });
+export async function atribuirRole({ perfilId, roleNome }) {
+  const { data, error } = await supabase
+    .from('perfis')
+    .update({ 
+      role_principal: roleNome,
+      tipo_usuario: (roleNome === 'super_admin' || roleNome === 'admin_institucional') 
+        ? 'administrador' 
+        : 'usuario'
+    })
+    .eq('id', perfilId)
+    .select(); // <--- IMPORTANTE: Isso força o retorno dos dados alterados
 
   if (error) {
-    console.error('atribuirRole RPC error:', JSON.stringify(error));
-    throw new Error(error.message);
+    console.error('Erro ao atribuir role:', error.message);
+    throw error;
   }
 
-  return data;
+  // Verificação de segurança: se data estiver vazio ou for array vazio, a RLS barrou
+  if (!data || data.length === 0) {
+    console.error('Atenção: O banco não retornou dados. Verifique as Policies (RLS).');
+    throw new Error('Permissão negada ou usuário não encontrado.');
+  }
+
+  return data[0];
 }

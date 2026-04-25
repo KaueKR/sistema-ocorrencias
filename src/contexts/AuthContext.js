@@ -16,20 +16,28 @@ export function AuthProvider({ children }) {
 
   /**
    * Carrega o perfil do usuário junto com suas roles e permissões.
-   * Chamado automaticamente no login e na inicialização da sessão.
+   * Usamos maybeSingle() para evitar erro de coerção JSON caso o perfil não exista.
    */
   const carregarPerfil = useCallback(async (userId) => {
     setPerfilCarregado(false);
     if (!userId) return;
+
     try {
-      // 1. Dados básicos do perfil
+      // 1. Dados básicos do perfil (Ajustado para evitar erro 42501/JSON)
       const { data: perfilData, error: perfilError } = await supabase
         .from('perfis')
         .select('id, nome_completo, role_principal')
         .eq('id', userId)
-        .single();
+        .maybeSingle(); // Retorna null em vez de erro se não encontrar
 
       if (perfilError) throw perfilError;
+
+      // Se o perfil não existe (ex: delay na trigger de criação), paramos aqui
+      if (!perfilData) {
+        console.warn('Perfil não encontrado para o usuário:', userId);
+        setPerfil(null);
+        return;
+      }
 
       // 2. Roles do usuário + permissões aninhadas em uma única query
       const { data: perfilRoles, error: rolesError } = await supabase
@@ -47,9 +55,9 @@ export function AuthProvider({ children }) {
 
       if (rolesError) throw rolesError;
 
-      // Formata o array de roles
+      // Formata o array de roles com segurança (verificando se pr.roles existe)
       const rolesFormatadas = (perfilRoles || [])
-        .filter(pr => pr.roles?.id)
+        .filter(pr => pr.roles)
         .map(pr => ({
           id:       pr.roles.id,
           nome:     pr.roles.nome,
@@ -61,11 +69,13 @@ export function AuthProvider({ children }) {
       // Extrai permissões únicas de todas as roles do usuário
       const permissoesSet = new Set();
       (perfilRoles || []).forEach(pr => {
-        (pr.roles?.role_permissoes || []).forEach(rp => {
-          if (rp.permissoes?.codigo) {
-            permissoesSet.add(rp.permissoes.codigo);
-          }
-        });
+        if (pr.roles?.role_permissoes) {
+          pr.roles.role_permissoes.forEach(rp => {
+            if (rp.permissoes?.codigo) {
+              permissoesSet.add(rp.permissoes.codigo);
+            }
+          });
+        }
       });
 
       setPerfil(perfilData);
@@ -91,16 +101,15 @@ export function AuthProvider({ children }) {
         setSessao(session);
         setUsuario(session?.user ?? null);
 
-        if (event === 'INITIAL_SESSION') {
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
           if (session?.user) {
             carregarPerfil(session.user.id).finally(() => setCarregando(false));
           } else {
             setCarregando(false);
           }
-        } else if (session?.user) {
-          carregarPerfil(session.user.id);
-        } else {
+        } else if (event === 'SIGNED_OUT') {
           limparPerfil();
+          setCarregando(false);
         }
       }
     );
@@ -143,7 +152,6 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider
       value={{
-        // Auth básico
         usuario,
         sessao,
         carregando,
@@ -153,7 +161,6 @@ export function AuthProvider({ children }) {
         enviarCodigoRecuperacao,
         verificarCodigo,
         atualizarSenha,
-        // RBAC
         perfil,
         roles,
         permissoes,

@@ -10,7 +10,7 @@ SETUP COMPLETO (primeira vez)
 --------------------------------------------------------------------------------
 
 # 1. Clonar o repositório
-git clone [URL_DO_REPOSITÓRIO]
+git clone https://github.com/KaueKR/sistema-ocorrencias.git
 cd sistema-ocorrencias
 
 # 2. Instalar todas as dependências do projeto

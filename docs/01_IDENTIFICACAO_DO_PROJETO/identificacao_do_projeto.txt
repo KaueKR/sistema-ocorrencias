@@ -38,9 +38,9 @@ Professores Colaboradores:
   - Prof. Me. Luis Felipe Grael Tinós
   - Profª. Esp. Camila Pellizon Floret
 
-Instituição            : [Inserir nome da instituição de ensino]
+Instituição            : Sagrado Coração
 Departamento / Curso   : Ciência da Computação
-Período de Desenvolvimento: [Inserir semestre/ano — ex: 1º Semestre de 2025]
+Período de Desenvolvimento: 1º Semestre de 2026
 
 --------------------------------------------------------------------------------
 4. TEMA E PROPÓSITO

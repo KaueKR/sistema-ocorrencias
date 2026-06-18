@@ -6,9 +6,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { usePermissions } from '../hooks/usePermissions';
 
 const MENU_ITEMS = [
-  { icon: 'person-outline',       label: 'Meus Dados',    danger: false },
-  { icon: 'lock-closed-outline',  label: 'Alterar Senha', danger: false },
-  { icon: 'help-circle-outline',  label: 'Suporte',       danger: false },
+  { icon: 'person-outline',      label: 'Meus Dados',    route: 'MeusDados'    },
+  { icon: 'lock-closed-outline', label: 'Alterar Senha', route: 'AlterarSenha' },
+  { icon: 'help-circle-outline', label: 'Suporte',       route: 'Suporte'      },
 ];
 
 const ROLE_LABELS = {
@@ -60,7 +60,7 @@ export default function PerfilScreen({ navigation }) {
       <ScrollView contentContainerStyle={styles.content}>
         <View style={styles.menuGroup}>
           {MENU_ITEMS.map((item, i) => (
-            <TouchableOpacity key={i} style={styles.menuItem} activeOpacity={0.7}>
+            <TouchableOpacity key={i} style={styles.menuItem} activeOpacity={0.7} onPress={() => navigation.navigate(item.route)}>
               <View style={styles.menuIconWrapper}>
                 <Ionicons name={item.icon} size={20} color="#EF1D26" />
               </View>
@@ -85,6 +85,20 @@ export default function PerfilScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         )}
+
+        <View style={[styles.menuGroup, { marginTop: 16 }]}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('Creditos')}
+            activeOpacity={0.7}
+          >
+            <View style={[styles.menuIconWrapper, { backgroundColor: '#FFF8E7' }]}>
+              <Ionicons name="star-outline" size={20} color="#C47A00" />
+            </View>
+            <Text style={styles.menuLabel}>Créditos</Text>
+            <Ionicons name="chevron-forward" size={18} color="#CCCCCC" />
+          </TouchableOpacity>
+        </View>
 
         <View style={[styles.menuGroup, { marginTop: 16 }]}>
           <TouchableOpacity style={styles.menuItem} onPress={handleSair} activeOpacity={0.7}>

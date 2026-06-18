@@ -17,6 +17,10 @@ import PerfilScreen from '../screens/PerfilScreen';
 import DetalheOcorrenciaScreen from '../screens/DetalheOcorrenciaScreen';
 import GestaoUsuariosScreen from '../screens/admin/GestaoUsuariosScreen';
 import DetalheUsuarioScreen from '../screens/admin/DetalheUsuarioScreen';
+import CreditosScreen from '../screens/CreditosScreen';
+import MeusDadosScreen from '../screens/MeusDadosScreen';
+import AlterarSenhaScreen from '../screens/AlterarSenhaScreen';
+import SuporteScreen from '../screens/SuporteScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -131,6 +135,26 @@ export default function AppNavigator() {
           <Stack.Screen
             name="DetalheUsuario"
             component={DetalheUsuarioScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Creditos"
+            component={CreditosScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="MeusDados"
+            component={MeusDadosScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AlterarSenha"
+            component={AlterarSenhaScreen}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Suporte"
+            component={SuporteScreen}
             options={{ headerShown: false }}
           />
         </>

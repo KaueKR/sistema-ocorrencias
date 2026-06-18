@@ -1,0 +1,57 @@
+================================================================================
+      IDENTIFICADOR DE PACOTE — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+PACKAGE NAME (Android)
+  br.edu.fabricadesoftware.ocorrencias
+
+BUNDLE IDENTIFIER (iOS)
+  br.edu.fabricadesoftware.ocorrencias
+
+APP SLUG (Expo)
+  sistema-ocorrencias
+
+--------------------------------------------------------------------------------
+CRITÉRIOS ADOTADOS PARA A NOMENCLATURA:
+--------------------------------------------------------------------------------
+
+Formato padrão: [TLD invertido].[organização].[produto]
+
+  br          → País de origem (Brasil)
+  edu         → Domínio de instituição educacional
+  fabricadesoftware → Identificador da unidade/projeto (Fábrica de Software)
+  ocorrencias → Nome funcional da aplicação
+
+Este identificador é ÚNICO por app no ecossistema de publicação (Google Play /
+App Store) e NÃO pode ser alterado após a publicação sem criar um novo app.
+
+--------------------------------------------------------------------------------
+REFERÊNCIAS NO PROJETO:
+--------------------------------------------------------------------------------
+
+Configurar em app.json:
+
+  {
+    "expo": {
+      "android": {
+        "package": "br.edu.fabricadesoftware.ocorrencias"
+      },
+      "ios": {
+        "bundleIdentifier": "br.edu.fabricadesoftware.ocorrencias"
+      }
+    }
+  }
+
+--------------------------------------------------------------------------------
+ALTERNATIVAS CASO O IDENTIFICADOR SEJA AJUSTADO:
+--------------------------------------------------------------------------------
+
+Se a instituição possuir domínio próprio, substituir o padrão:
+
+  Exemplo com domínio da instituição:
+  br.edu.[sigla-da-instituicao].ocorrencias
+
+  Exemplo genérico:
+  com.sistemaocorrencias.app
+
+================================================================================

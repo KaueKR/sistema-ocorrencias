@@ -1,0 +1,177 @@
+================================================================================
+      RELATO DE EXPERIÊNCIA DO ESTUDANTE
+      Projeto de Extensão — Fábrica de Software
+      Sistema de Ocorrências — Aplicativo Mobile
+================================================================================
+
+Integrantes : Kauê Kanagusko Ruiz e Gerson de Oliveira Lopes Jr.
+Curso       : Ciência da Computação
+Coordenador : Prof. Dr. Elvio Gilberto da Silva
+
+--------------------------------------------------------------------------------
+
+INTRODUÇÃO
+
+A participação no Projeto de Extensão Fábrica de Software representou, para nós,
+uma transição fundamental entre dois mundos que coexistem, mas raramente se
+encontram com a profundidade necessária no ensino superior: o mundo acadêmico,
+com sua ênfase em fundamentos teóricos e raciocínio algorítmico, e o mundo
+profissional, com suas demandas práticas de entrega, colaboração e tomada de
+decisões arquiteturais sob incerteza. O desenvolvimento do Sistema de Ocorrências
+— uma aplicação mobile para registro, acompanhamento e gestão de ocorrências
+institucionais — foi o projeto que materializou essa transição.
+
+Este relato tem como objetivo descrever, de forma dissertativa e reflexiva, os
+principais aprendizados, desafios e conquistas obtidos ao longo do desenvolvimento,
+abordando não apenas os aspectos técnicos da construção do software, mas também
+as dimensões humanas e metodológicas que permearam cada etapa do projeto.
+
+--------------------------------------------------------------------------------
+
+A ESCOLHA DA ARQUITETURA MOBILE E SEUS DESAFIOS INICIAIS
+
+A decisão de construir o Sistema de Ocorrências como uma aplicação mobile nativa
+— em oposição a uma solução web responsiva — foi fruto de uma análise do contexto
+de uso. Usuários institucionais (alunos, professores, técnicos) têm padrões de
+acesso a informações predominantemente móveis: consultar o status de uma ocorrência,
+abrir um chamado ou receber uma atualização são ações que ocorrem naturalmente
+em momentos de mobilidade, fora do ambiente de trabalho sentado diante de um
+computador. A escolha pelo mobile, portanto, não foi um capricho técnico, mas uma
+decisão centrada no usuário.
+
+Adotamos o React Native com Expo como stack principal. A curva de aprendizado
+inicial foi significativa: embora a equipe tivesse experiência com JavaScript e
+com os conceitos de componentes do React, o paradigma mobile traz consigo um
+conjunto de preocupações ausentes no desenvolvimento web. Lidar com SafeArea
+(a região de exibição segura que varia em cada modelo de dispositivo devido a
+notches, câmeras e barras de gesto), entender o ciclo de re-renderização em um
+ambiente com recursos de memória mais restritos que o navegador, e compreender
+a diferença semântica entre Flexbox no mobile e no browser foram os primeiros
+obstáculos reais a superar.
+
+A escolha do Expo, em particular, revelou-se acertada. O ecossistema da plataforma
+abstraiu grande parte da complexidade de configuração de projetos Android e iOS,
+permitindo que o foco da equipe permanecesse na lógica de negócio e na experiência
+do usuário, e não em horas de configuração de Android Studio ou Xcode. O Expo Go,
+aplicativo que permite rodar o código em desenvolvimento diretamente no celular
+físico via QR Code, eliminou praticamente o ciclo de feedback lento que
+caracteriza builds nativas tradicionais.
+
+--------------------------------------------------------------------------------
+
+A INTEGRAÇÃO COM SUPABASE E O APRENDIZADO SOBRE SEGURANÇA DE DADOS
+
+Uma das decisões arquiteturais mais relevantes do projeto foi a adoção do Supabase
+como backend-as-a-service. Em vez de construir um servidor REST do zero — o que
+demandaria tempo considerável de configuração, hospedagem e manutenção de
+infraestrutura —, optamos por uma plataforma que já provê autenticação, banco de
+dados PostgreSQL e armazenamento de arquivos de forma integrada.
+
+O contato com o Supabase nos expôs a conceitos que, embora presentes nas ementas
+de disciplinas de banco de dados, raramente são experienciados de forma aplicada
+no ambiente acadêmico: as políticas de Row Level Security (RLS). O RLS é um
+mecanismo do PostgreSQL que permite definir, diretamente no banco de dados, quais
+linhas cada usuário pode ler ou modificar, com base em sua identidade autenticada.
+Implementar RLS corretamente foi um dos desafios mais enriquecedores do projeto.
+
+Nos deparamos, por exemplo, com a situação em que a tela "Meus Dados" atualizava
+o nome do usuário na camada de autenticação, mas falhava silenciosamente ao
+tentar persistir a alteração na tabela `perfis`, pois a política de UPDATE estava
+ausente. Diagnosticar esse tipo de problema — onde o erro não é visível na interface,
+mas está na camada de segurança do banco — exigiu desenvolver uma habilidade
+analítica que vai além de verificar se o código "funciona": é preciso entender
+a cadeia completa de confiança entre o aplicativo, o SDK cliente, a API do
+backend e o banco de dados.
+
+O modelo RBAC (Role-Based Access Control) que implementamos — com seis níveis
+hierárquicos de acesso (super_admin, admin_institucional, gestor_setor, técnico,
+professor e aluno) — também foi uma experiência formadora. A implementação de
+um sistema de permissões granular, onde cada ação da interface é condicionada
+não apenas a estar autenticado, mas a possuir um papel específico no sistema,
+nos ensinou a pensar em segurança como uma preocupação de primeira classe no
+design da aplicação, não como um detalhe de implementação a ser adicionado no fim.
+
+--------------------------------------------------------------------------------
+
+NAVEGAÇÃO, UI/UX E A DISCIPLINA DO DESIGN CONSISTENTE
+
+A construção das interfaces do Sistema de Ocorrências foi um exercício contínuo
+de equilíbrio entre funcionalidade e estética. Adotamos uma decisão consciente
+de não utilizar bibliotecas de componentes de UI de terceiros (como NativeBase ou
+React Native Paper), construindo cada elemento a partir dos primitivos do
+React Native (View, Text, TouchableOpacity, StyleSheet). Essa escolha,
+intencionalmente mais trabalhosa, nos proporcionou um entendimento profundo do
+sistema de layout do React Native e nos obrigou a manter uma disciplina rigorosa
+de consistência visual.
+
+Desenvolvemos uma paleta de design própria — vermelho institucional (#EF1D26),
+fundo escuro (#232323), superfície clara (#F8F8F8) — e a aplicamos de forma
+consistente em mais de uma dezena de telas. Cada nova tela criada precisava seguir
+os padrões estabelecidos: header escuro com botão de retorno circular, cards com
+bordas arredondadas (16px), ícones com containers quadrados arredondados, e
+hierarquia tipográfica clara. Manter essa consistência ao longo de um projeto que
+cresceu organicamente foi um desafio real de disciplina de equipe.
+
+Um episódio específico ilustra bem o aprendizado em UI/UX: o botão de voltar
+da tela de Créditos foi inicialmente implementado com `position: 'absolute'`
+dentro de um container com `alignItems: 'center'`, combinado com `top: undefined`.
+O resultado foi um botão visualmente presente, mas completamente inoperante —
+sua hitbox estava fora da área interativa da tela. Diagnosticar e corrigir esse
+bug exigiu entender profundamente como o motor de layout do React Native resolve
+posicionamento absoluto em containers flexíveis, um conhecimento que nenhum
+tutorial básico aborda com a profundidade necessária.
+
+A solução — remover o posicionamento absoluto e reorganizar a hierarquia do JSX
+para colocar o botão no fluxo normal do layout, com o conteúdo central em um
+View filho separado — foi simples em retrospecto, mas reveladora no processo: no
+desenvolvimento mobile, a ordem dos elementos no JSX importa tanto quanto o
+estilo aplicado a eles.
+
+--------------------------------------------------------------------------------
+
+METODOLOGIA, COLABORAÇÃO E GERENCIAMENTO DE ESCOPO
+
+O desenvolvimento em dupla trouxe dinâmicas que enriquecem, mas também
+complexificam o processo. A necessidade de comunicar decisões de arquitetura
+— como a estrutura do AuthContext, a forma como as permissões seriam propagadas
+pelo app, ou a organização das rotas de navegação — exigiu um nível de verbalização
+do raciocínio técnico que, quando se trabalha individualmente, pode permanecer
+implícito. Explicar ao outro integrante por que uma abordagem foi escolhida em
+detrimento de outra é, paradoxalmente, uma das formas mais eficazes de verificar
+se a própria compreensão do problema é sólida.
+
+O escopo do projeto também nos ensinou sobre a importância de definir e respeitar
+limites. A tendência natural ao longo do desenvolvimento foi adicionar
+funcionalidades — "seria ótimo ter notificações push", "e se a tela de suporte
+salvasse direto no banco?", "podemos adicionar filtros mais avançados" — e o
+exercício constante foi avaliar se cada adição servia ao objetivo central do sistema
+ou se representava escopo desnecessário que atrasaria a entrega. A regra que
+adotamos foi simples: uma funcionalidade deve entrar no produto apenas se melhora
+a experiência de pelo menos um dos perfis de usuário mapeados. Caso contrário, vai
+para uma lista de "melhorias futuras" e não para o código da versão atual.
+
+--------------------------------------------------------------------------------
+
+CONSIDERAÇÕES FINAIS
+
+O desenvolvimento do Sistema de Ocorrências no âmbito da Fábrica de Software
+foi, em sua essência, um projeto de engenharia completo: abrangeu levantamento
+de requisitos, decisões de arquitetura, implementação iterativa, debugging,
+refatoração, documentação e entrega. Cada uma dessas etapas trouxe um conjunto
+específico de aprendizados que transcende o domínio técnico do React Native ou
+do Supabase.
+
+Aprendemos que escrever código funcional é apenas o ponto de partida. Código
+que pode ser mantido por outros, que trata segurança como requisito de primeira
+classe, que respeita a experiência do usuário final e que é documentado de forma
+que uma nova equipe possa assumir — esse é o código que tem valor real em um
+contexto profissional ou acadêmico continuado.
+
+Saímos deste projeto com uma percepção mais madura do que significa desenvolver
+software: não é apenas resolver problemas técnicos, mas entender o contexto em
+que o software será usado, tomar decisões conscientes sobre trade-offs e entregar
+algo que genuinamente serve às pessoas que o utilizarão. Para dois estudantes de
+Ciência da Computação, essa foi a lição mais valiosa que um projeto de extensão
+poderia proporcionar.
+
+================================================================================

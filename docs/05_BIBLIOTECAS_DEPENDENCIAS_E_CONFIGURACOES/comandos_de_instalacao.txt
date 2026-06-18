@@ -1,0 +1,110 @@
+================================================================================
+      COMANDOS DE INSTALAÇÃO — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Scripts rápidos para configurar e executar o projeto do zero.
+Execute os comandos na ordem apresentada, a partir da raiz do repositório.
+
+--------------------------------------------------------------------------------
+SETUP COMPLETO (primeira vez)
+--------------------------------------------------------------------------------
+
+# 1. Clonar o repositório
+git clone [URL_DO_REPOSITÓRIO]
+cd sistema-ocorrencias
+
+# 2. Instalar todas as dependências do projeto
+npm install
+
+# 3. Copiar e preencher variáveis de ambiente
+cp .env.example .env
+#    Abra o arquivo .env e preencha SUPABASE_URL e SUPABASE_ANON_KEY
+
+# 4. Verificar saúde das dependências Expo
+npx expo-doctor
+
+# 5. Iniciar o servidor de desenvolvimento
+npx expo start
+
+--------------------------------------------------------------------------------
+INSTALAÇÃO DE DEPENDÊNCIAS (projeto já clonado)
+--------------------------------------------------------------------------------
+
+# Instalar todas as dependências listadas no package.json
+npm install
+
+# Instalar uma nova dependência e registrá-la no package.json
+npm install nome-do-pacote
+
+# Instalar pacote compatível com a versão do Expo SDK (recomendado para libs Expo)
+npx expo install nome-do-pacote
+
+--------------------------------------------------------------------------------
+COMANDOS DE EXECUÇÃO
+--------------------------------------------------------------------------------
+
+# Iniciar com menu interativo (QR Code + opções de plataforma)
+npx expo start
+
+# Iniciar diretamente no Android (emulador deve estar aberto)
+npx expo start --android
+
+# Iniciar diretamente no iOS (apenas macOS, simulador deve estar aberto)
+npx expo start --ios
+
+# Iniciar limpando o cache do Metro Bundler (resolve a maioria dos bugs de bundler)
+npx expo start --clear
+
+# Iniciar em modo túnel (útil quando celular e PC estão em redes diferentes)
+npx expo start --tunnel
+
+--------------------------------------------------------------------------------
+BUILDS NATIVOS LOCAIS
+--------------------------------------------------------------------------------
+
+# Build e execução Android local (requer Android SDK / Android Studio)
+npx expo run:android
+
+# Build e execução iOS local (requer Xcode — apenas macOS)
+npx expo run:ios
+
+--------------------------------------------------------------------------------
+BUILDS DE PRODUÇÃO (EAS Build — requer conta Expo)
+--------------------------------------------------------------------------------
+
+# Instalar EAS CLI globalmente (apenas uma vez)
+npm install -g eas-cli
+
+# Autenticar na conta Expo
+eas login
+
+# Configurar o projeto para EAS (apenas uma vez)
+eas build:configure
+
+# Build APK Android (para instalar diretamente — perfil preview)
+eas build --platform android --profile preview
+
+# Build AAB Android (para Google Play Store — perfil production)
+eas build --platform android --profile production
+
+# Build IPA iOS (para App Store / TestFlight — perfil production)
+eas build --platform ios --profile production
+
+--------------------------------------------------------------------------------
+LIMPEZA E RESET
+--------------------------------------------------------------------------------
+
+# Limpar cache do Metro e reiniciar
+npx expo start --clear
+
+# Reset completo de dependências (resolve problemas graves de node_modules)
+rm -rf node_modules
+npm install
+npx expo start --clear
+
+# Windows (PowerShell) — equivalente ao rm -rf
+Remove-Item -Recurse -Force node_modules
+npm install
+npx expo start --clear
+
+================================================================================

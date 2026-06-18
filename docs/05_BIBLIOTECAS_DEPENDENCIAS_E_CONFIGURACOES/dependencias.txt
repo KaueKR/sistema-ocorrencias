@@ -1,0 +1,52 @@
+================================================================================
+      DEPENDÊNCIAS DO PROJETO — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+As dependências abaixo correspondem ao arquivo package.json do projeto.
+Para instalar todas, execute: npm install
+
+--------------------------------------------------------------------------------
+DEPENDÊNCIAS DE PRODUÇÃO (dependencies)
+--------------------------------------------------------------------------------
+
+RUNTIME PRINCIPAL
+  expo                              ~54.0.33
+  react                             19.1.0
+  react-native                      0.81.5
+
+NAVEGAÇÃO
+  @react-navigation/native          ^6.x
+  @react-navigation/native-stack    ^6.x
+  @react-navigation/bottom-tabs     ^6.x
+  react-native-screens              ~4.4.0
+  react-native-safe-area-context    4.12.0
+
+BACKEND / SUPABASE
+  @supabase/supabase-js             ^2.x
+
+ÍCONES E ASSETS
+  @expo/vector-icons                ^14.0.4
+
+UTILITÁRIOS EXPO
+  expo-status-bar                   ~2.0.1
+  expo-font                         ~13.0.4
+  expo-splash-screen                ~0.29.22
+  expo-linking                      ~7.0.5
+  expo-constants                    ~17.0.8
+
+--------------------------------------------------------------------------------
+DEPENDÊNCIAS DE DESENVOLVIMENTO (devDependencies)
+--------------------------------------------------------------------------------
+
+  @babel/core                       ^7.25.2
+
+--------------------------------------------------------------------------------
+NOTAS SOBRE O GERENCIADOR DE PACOTES
+--------------------------------------------------------------------------------
+
+  Gerenciador : npm
+  Lockfile    : package-lock.json (versionar junto com o projeto)
+
+  ATENÇÃO: Não misturar npm e yarn no mesmo projeto. Use exclusivamente npm.
+
+================================================================================

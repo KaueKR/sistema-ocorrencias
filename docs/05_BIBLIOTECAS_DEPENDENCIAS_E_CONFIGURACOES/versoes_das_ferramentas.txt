@@ -1,0 +1,74 @@
+================================================================================
+      VERSÕES DAS FERRAMENTAS — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Este documento lista as versões utilizadas no desenvolvimento e as versões
+mínimas recomendadas para rodar o projeto sem problemas.
+
+--------------------------------------------------------------------------------
+AMBIENTE DE DESENVOLVIMENTO
+--------------------------------------------------------------------------------
+
+Ferramenta              Versão Usada        Versão Mínima       Observação
+----------------------- ------------------- ------------------- ----------------------------
+Node.js                 20.x LTS            18.0.0              Versões ímpares (19, 21) não
+                                                                recomendadas (non-LTS)
+npm                     10.x                9.0.0               Vem junto com o Node.js
+Expo CLI                0.22.x+             0.18.x              Instalado via npx (sem global)
+EAS CLI                 [Inserir versão]    3.x                 Necessário apenas para builds
+Git                     2.x                 2.30.0              Qualquer versão recente
+
+--------------------------------------------------------------------------------
+RUNTIME DA APLICAÇÃO
+--------------------------------------------------------------------------------
+
+Framework / Biblioteca  Versão              Canal               Observação
+----------------------- ------------------- ------------------- ----------------------------
+Expo SDK                54.0.33             Stable              Define as versões das demais
+React Native            0.81.5              —                   Gerenciado pelo Expo SDK 54
+React                   19.1.0              —                   Gerenciado pelo Expo SDK 54
+JavaScript / JSX        ES2022+             —                   Transpilado via Babel
+
+--------------------------------------------------------------------------------
+PLATAFORMAS ALVO
+--------------------------------------------------------------------------------
+
+Plataforma              Versão Mínima       Versão Testada
+----------------------- ------------------- -----------------------
+Android                 API 26 (Android 8)  API 33 (Android 13)
+iOS                     14.0                17.0
+Expo Go (Android)       Atual               SDK 54 compatível
+Expo Go (iOS)           Atual               SDK 54 compatível
+
+--------------------------------------------------------------------------------
+BACKEND (SUPABASE)
+--------------------------------------------------------------------------------
+
+Serviço                 Versão / Plano
+----------------------- ------------------------------------
+Supabase Platform       Cloud (supabase.com) — Plano Free
+supabase-js SDK         ^2.x (última estável)
+PostgreSQL              15.x (gerenciado pelo Supabase)
+Auth                    GoTrue (integrado ao Supabase)
+
+--------------------------------------------------------------------------------
+SISTEMA OPERACIONAL DE DESENVOLVIMENTO
+--------------------------------------------------------------------------------
+
+Para desenvolvimento Android:   Windows 10/11, macOS, Linux
+Para desenvolvimento iOS:       OBRIGATÓRIO macOS + Xcode 15+
+Para uso do Expo Go:            Qualquer OS (o app roda no celular)
+
+--------------------------------------------------------------------------------
+COMO VERIFICAR VERSÕES INSTALADAS
+--------------------------------------------------------------------------------
+
+  node --version          → Ex: v20.11.0
+  npm --version           → Ex: 10.2.4
+  npx expo --version      → Ex: 0.22.3
+  git --version           → Ex: git version 2.43.0
+
+  # Dentro do projeto:
+  npx expo-doctor         → Verifica compatibilidade de todas as dependências Expo
+
+================================================================================

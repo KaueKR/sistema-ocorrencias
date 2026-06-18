@@ -1,0 +1,106 @@
+================================================================================
+      BIBLIOTECAS UTILIZADAS — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Este documento descreve o papel e a justificativa de adoção de cada biblioteca
+de terceiros utilizada no projeto.
+
+--------------------------------------------------------------------------------
+1. EXPO (expo ~54.0.33)
+--------------------------------------------------------------------------------
+PAPEL       : Plataforma e toolchain principal de desenvolvimento mobile.
+JUSTIFICATIVA: O Expo abstrai a complexidade do build nativo (Android/iOS),
+               provê acesso a APIs de dispositivo (câmera, notificações, etc.)
+               e oferece o Expo Go para desenvolvimento rápido sem build nativo.
+               O SDK 54 é a versão estável mais recente compatível com
+               React Native 0.81.x.
+USADO EM    : App.js, app.json, scripts de build
+
+--------------------------------------------------------------------------------
+2. @supabase/supabase-js (^2.x)
+--------------------------------------------------------------------------------
+PAPEL       : SDK oficial do Supabase para JavaScript/TypeScript.
+JUSTIFICATIVA: Biblioteca cliente que encapsula toda a comunicação com o backend
+               Supabase: autenticação (Auth), queries ao banco de dados
+               (PostgreSQL via PostgREST), upload de arquivos (Storage) e
+               Realtime. Evita a necessidade de implementar chamadas HTTP
+               manualmente e gerencia tokens JWT automaticamente.
+USADO EM    : src/services/supabase.js (inicialização do cliente)
+               src/contexts/AuthContext.js (auth state)
+               src/screens/MeusDadosScreen.js (update de perfil)
+               src/screens/AlterarSenhaScreen.js (reautenticação + update senha)
+               src/services/ocorrenciasService.js, adminService.js
+
+VARIÁVEIS NECESSÁRIAS:
+  EXPO_PUBLIC_SUPABASE_URL      — URL do projeto Supabase
+  EXPO_PUBLIC_SUPABASE_ANON_KEY — Chave pública anônima do projeto
+
+--------------------------------------------------------------------------------
+3. @react-navigation/native + native-stack + bottom-tabs
+--------------------------------------------------------------------------------
+PAPEL       : Sistema de navegação completo entre telas.
+JUSTIFICATIVA: React Navigation é a solução padrão da comunidade React Native
+               para gerenciamento de navegação. O `native-stack` usa os
+               controladores nativos de cada plataforma (Activity no Android,
+               UINavigationController no iOS), resultando em performance superior
+               ao stack JS puro. O `bottom-tabs` fornece a barra inferior com
+               suporte a tab bar customizada (incluindo o FAB central).
+USADO EM    : src/navigation/AppNavigator.js
+
+--------------------------------------------------------------------------------
+4. react-native-safe-area-context (4.12.0)
+--------------------------------------------------------------------------------
+PAPEL       : Gerencia as áreas seguras de exibição do dispositivo.
+JUSTIFICATIVA: Dispositivos modernos possuem notch, câmera punch-hole e
+               indicadores de gesto que sobrepõem o conteúdo da aplicação.
+               O hook `useSafeAreaInsets()` fornece os valores exatos de padding
+               necessários para cada lado da tela em cada dispositivo,
+               garantindo que cabeçalhos e rodapés não fiquem ocultos.
+USADO EM    : Todos os screens que possuem header customizado (PerfilScreen,
+               MeusDadosScreen, AlterarSenhaScreen, SuporteScreen,
+               CreditosScreen, HomeScreen, etc.)
+
+--------------------------------------------------------------------------------
+5. react-native-screens (~4.4.0)
+--------------------------------------------------------------------------------
+PAPEL       : Otimização de performance para navegação entre telas.
+JUSTIFICATIVA: Substitui as views JS puras do React Native por componentes de
+               tela nativos, reduzindo o uso de memória e melhorando a
+               performance de transições. É uma dependência peer do
+               React Navigation e deve ser instalada junto.
+USADO EM    : Habilitado automaticamente pelo React Navigation
+
+--------------------------------------------------------------------------------
+6. @expo/vector-icons — Ionicons (^14.0.4)
+--------------------------------------------------------------------------------
+PAPEL       : Biblioteca de ícones vetoriais.
+JUSTIFICATIVA: Fornece acesso a mais de 1.300 ícones do conjunto Ionicons
+               (Material Icons, FontAwesome, etc.) sem necessidade de assets
+               externos. Os ícones são renderizados como fontes vetoriais,
+               escalando perfeitamente em qualquer densidade de tela (DPI).
+               Utilizado em absolutamente todos os componentes de UI do projeto.
+USADO EM    : Todas as telas e componentes de navegação
+
+FAMÍLIA USADA: Ionicons (ex: "arrow-back", "person-outline", "lock-closed-outline",
+               "shield-checkmark", "home", "add", "chevron-forward", etc.)
+
+--------------------------------------------------------------------------------
+7. expo-status-bar (~2.0.1)
+--------------------------------------------------------------------------------
+PAPEL       : Controla o estilo e a cor da barra de status do dispositivo.
+JUSTIFICATIVA: Permite definir por tela se os ícones da status bar serão claros
+               ou escuros, e define a cor de fundo no Android. Essencial para
+               a consistência visual com o header escuro (#232323) do app.
+USADO EM    : Todas as telas (StatusBar com barStyle="light-content")
+
+--------------------------------------------------------------------------------
+8. expo-splash-screen (~0.29.22)
+--------------------------------------------------------------------------------
+PAPEL       : Mantém a splash screen visível enquanto o app carrega.
+JUSTIFICATIVA: Evita a tela branca durante o carregamento inicial (verificação
+               de sessão Supabase, carregamento de fontes, etc.). A splash
+               é ocultada manualmente após o estado de autenticação ser
+               determinado.
+USADO EM    : App.js
+
+================================================================================

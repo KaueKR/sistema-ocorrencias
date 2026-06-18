@@ -1,0 +1,254 @@
+================================================================================
+       DOCUMENTAÇÃO DETALHADA — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+--------------------------------------------------------------------------------
+1. RESUMO EXECUTIVO
+--------------------------------------------------------------------------------
+
+O Sistema de Ocorrências é uma aplicação mobile multiplataforma (Android/iOS)
+desenvolvida no âmbito do Projeto de Extensão Fábrica de Software, sob coordenação
+do Prof. Dr. Elvio Gilberto da Silva. O sistema tem como proposta central
+modernizar e digitalizar o fluxo de registro e gestão de ocorrências institucionais,
+substituindo processos manuais por uma solução rastreável, auditável e acessível
+via smartphone.
+
+A aplicação é construída sobre React Native com Expo, adotando Supabase como
+backend-as-a-service para autenticação, persistência de dados e controle de acesso.
+O modelo de permissões é baseado em RBAC (Role-Based Access Control) com seis
+níveis hierárquicos, garantindo que cada usuário acesse apenas as funcionalidades
+pertinentes à sua função institucional.
+
+O ciclo de vida de uma ocorrência no sistema contempla seis estados distintos
+(Aberta → Em Análise → Em Andamento → Resolvida / Cancelada → Encerrada),
+com transições controladas por perfil de acesso.
+
+--------------------------------------------------------------------------------
+2. OBJETIVOS DO PROJETO
+--------------------------------------------------------------------------------
+
+OBJETIVO GERAL:
+  Desenvolver uma plataforma mobile que centralize e digitalize o processo de
+  abertura, acompanhamento e resolução de ocorrências institucionais, promovendo
+  transparência, rastreabilidade e eficiência na gestão de incidentes.
+
+OBJETIVOS ESPECÍFICOS:
+  a) Implementar um sistema de autenticação seguro com suporte a múltiplos
+     perfis de usuário e controle de acesso granular (RBAC).
+
+  b) Desenvolver um fluxo completo de gestão de ocorrências: abertura, edição
+     de status, visualização detalhada e encerramento.
+
+  c) Criar uma interface mobile moderna, responsiva e acessível, seguindo
+     princípios de UI/UX para aplicações nativas.
+
+  d) Integrar o aplicativo com o Supabase para persistência de dados em tempo
+     real, autenticação e segurança via Row Level Security (RLS).
+
+  e) Construir um painel administrativo in-app para gestão de usuários e
+     atribuição de perfis de acesso.
+
+  f) Documentar o projeto de forma completa para entrega acadêmica e possível
+     continuidade por turmas futuras da Fábrica de Software.
+
+--------------------------------------------------------------------------------
+3. PÚBLICO-ALVO
+--------------------------------------------------------------------------------
+
+O sistema é desenhado para o ecossistema de uma instituição de ensino, atendendo
+os seguintes perfis de usuários:
+
+  ALUNOS
+    Perfil de acesso padrão para todos os novos cadastros. Podem abrir ocorrências,
+    acompanhar o status das suas próprias ocorrências e interagir com o suporte.
+
+  PROFESSORES
+    Acesso às ocorrências de sua área de atuação. Podem registrar ocorrências
+    relacionadas a atividades pedagógicas.
+
+  TÉCNICOS
+    Responsáveis pela análise e resolução de ocorrências técnicas (manutenção,
+    infraestrutura, suporte de TI, etc.).
+
+  GESTORES DE SETOR
+    Supervisão de ocorrências dentro de um setor específico. Podem alterar
+    status e reatribuir responsabilidades.
+
+  ADMINISTRADORES INSTITUCIONAIS
+    Acesso amplo ao sistema, incluindo o Painel Administrativo para gestão
+    de usuários, atribuição de roles e visualização de todas as ocorrências.
+
+  SUPER ADMIN
+    Nível máximo de acesso. Controle total sobre o sistema, incluindo gestão
+    de outros administradores.
+
+--------------------------------------------------------------------------------
+4. FUNCIONALIDADES DETALHADAS
+--------------------------------------------------------------------------------
+
+4.1 AUTENTICAÇÃO E ONBOARDING
+  - Login com e-mail e senha via Supabase Auth
+  - Cadastro de novo usuário com nome completo, e-mail e senha
+  - Recuperação de senha por e-mail (fluxo OTP + redefinição)
+  - Sessão persistente com gerenciamento automático de token
+  - Logout com confirmação e limpeza de sessão local
+
+4.2 DASHBOARD (TELA INICIAL)
+  - Painel de boas-vindas personalizado com nome do usuário
+  - Contadores em tempo real: ocorrências "Em Aberto" e "Resolvidas"
+  - Lista das 5 ocorrências mais recentes com status visual colorido
+  - Filtros para alternar entre ocorrências ativas e resolvidas
+  - Pull-to-refresh para atualização manual dos dados
+  - Acesso rápido à criação de nova ocorrência
+  - Avatar do usuário com iniciais do nome
+
+4.3 REGISTRO DE OCORRÊNCIA
+  - Formulário de abertura com campos obrigatórios: título, descrição, categoria
+  - Seleção de categoria de ocorrência
+  - Validação de campos antes do envio
+  - Confirmação de criação com feedback visual
+
+4.4 LISTAGEM DE OCORRÊNCIAS ("MINHAS OCORRÊNCIAS")
+  - Lista paginada das ocorrências do usuário logado
+  - Indicadores visuais de status com ícones e cores por estado:
+      · Aberta       — Vermelho    (#EF1D26)
+      · Em Análise   — Âmbar       (#C78A00)
+      · Em Andamento — Azul        (#2563eb)
+      · Resolvida    — Verde       (#16a34a)
+      · Cancelada    — Cinza       (#666666)
+      · Encerrada    — Cinza       (#666666)
+  - Filtro por status ativo/resolvido
+  - Acesso ao detalhe de cada ocorrência
+
+4.5 DETALHE DE OCORRÊNCIA
+  - Visualização completa dos dados da ocorrência
+  - Histórico e informações de status
+  - [Inserir demais campos exibidos no DetalheOcorrenciaScreen]
+
+4.6 PERFIL DO USUÁRIO
+  Menu de perfil com acesso a:
+  · Meus Dados         — Visualização e edição do nome; e-mail e role somente leitura
+  · Alterar Senha      — Formulário com validação de senha atual + requisitos de
+                          segurança (min. 8 chars, maiúscula, número) + reautenticação
+  · Suporte            — Abertura de chamado com tipo de problema e descrição
+  · Painel Adm.        — Visível apenas para usuários com nível admin ou superior
+  · Créditos           — Informações sobre o projeto e equipe de desenvolvimento
+  · Sair da Conta      — Logout com confirmação via Alert nativo
+
+4.7 PAINEL ADMINISTRATIVO (RESTRITO)
+  Visível exclusivamente para Admin Institucional e Super Admin:
+  - Listagem de todos os usuários cadastrados no sistema
+  - Detalhe do usuário com histórico de roles atribuídas
+  - Atribuição e remoção de perfis de acesso (RBAC hierárquico)
+  - Controle de permissões: um gestor não pode atribuir roles acima do seu nível
+
+4.8 SISTEMA DE RBAC (CONTROLE DE ACESSO)
+  Hierarquia de roles por nível numérico (menor = mais privilegiado):
+    Nível 1: super_admin
+    Nível 2: admin_institucional
+    Nível 3: gestor_setor
+    Nível 4: tecnico
+    Nível 5: professor
+    Nível 6: aluno (padrão)
+
+  Permissões granulares via tabela `permissoes` com códigos de ação.
+  Hook `usePermissions()` expõe: `can(codigo)`, `hasRole(nome)`,
+  `isAdmin`, `isSuperAdmin`, `canManageRole(nivel)`.
+  Componente `PermissionGuard` para renderização condicional de UI.
+
+4.9 ÁREA DE SUPORTE
+  - Dropdown de tipo de problema com modal bottom-sheet customizado
+    (sem dependência de biblioteca externa de Picker)
+  - Campo de texto multilinha com contador de caracteres (máx. 1000)
+  - Vínculo automático do chamado ao e-mail do usuário logado
+  - Estado de sucesso com tela dedicada após envio
+  - Stub de API pronto para integração com tabela `suporte` no Supabase
+
+4.10 TELA DE CRÉDITOS
+  - Informações do Projeto de Extensão Fábrica de Software
+  - Corpo docente (coordenador e professores colaboradores)
+  - Equipe de desenvolvimento (alunos com curso)
+  - Acessível pelo menu de perfil
+
+--------------------------------------------------------------------------------
+5. ARQUITETURA TECNOLÓGICA DE ALTO NÍVEL
+--------------------------------------------------------------------------------
+
+  ┌─────────────────────────────────────────────────────────┐
+  │                   DISPOSITIVO DO USUÁRIO                 │
+  │                                                         │
+  │   ┌──────────────────────────────────────────────────┐  │
+  │   │                REACT NATIVE + EXPO               │  │
+  │   │                                                  │  │
+  │   │  ┌────────────┐    ┌─────────────────────────┐  │  │
+  │   │  │  AuthContext│    │   AppNavigator (Stack)  │  │  │
+  │   │  │  (RBAC +   │    │   ├── Auth Screens       │  │  │
+  │   │  │  Sessão)   │    │   └── Main Tabs          │  │  │
+  │   │  └─────┬──────┘    │       ├── Dashboard       │  │  │
+  │   │        │           │       ├── Ocorrências     │  │  │
+  │   │  ┌─────▼──────┐   │       ├── Nova Ocorrência │  │  │
+  │   │  │usePermissions   │       └── Perfil          │  │  │
+  │   │  │PermissionGuard  └─────────────────────────  │  │  │
+  │   │  └────────────┘                                │  │  │
+  │   └──────────────────────┬───────────────────────── ┘  │
+  │                          │  supabase-js SDK             │
+  └──────────────────────────┼─────────────────────────────┘
+                             │ HTTPS / WebSocket
+  ┌──────────────────────────▼─────────────────────────────┐
+  │                        SUPABASE                        │
+  │                                                        │
+  │  ┌──────────────┐  ┌─────────────┐  ┌──────────────┐  │
+  │  │  Auth        │  │  PostgreSQL  │  │   Storage    │  │
+  │  │  (JWT/OTP)   │  │  + RLS      │  │  (anexos)    │  │
+  │  └──────────────┘  └─────────────┘  └──────────────┘  │
+  │                                                        │
+  │  Tabelas: perfis, roles, perfil_roles,                 │
+  │           role_permissoes, permissoes, [ocorrencias]   │
+  └────────────────────────────────────────────────────────┘
+
+PADRÕES E DECISÕES ARQUITETURAIS:
+  - Context API para estado global (AuthContext) — sem Redux ou Zustand
+  - Navegação hierárquica: Stack raiz → Bottom Tabs → Stack de detalhes
+  - Custom Tab Bar com FAB centralizado para "Nova Ocorrência"
+  - Row Level Security (RLS) no PostgreSQL como camada de segurança de dados
+  - Sem biblioteca de UI de terceiros — StyleSheet.create() puro para todos os estilos
+  - Paleta de design própria: vermelho (#EF1D26), escuro (#232323), cinza (#F8F8F8)
+
+--------------------------------------------------------------------------------
+6. ESTRUTURA DE DIRETÓRIOS DO CÓDIGO-FONTE
+--------------------------------------------------------------------------------
+
+  src/
+  ├── contexts/
+  │   └── AuthContext.js        — Estado global de auth, RBAC, perfil e sessão
+  ├── navigation/
+  │   └── AppNavigator.js       — Configuração completa de rotas e tabs
+  ├── screens/
+  │   ├── LoginScreen.js
+  │   ├── RegisterScreen.js
+  │   ├── ForgotPasswordScreen.js
+  │   ├── HomeScreen.js
+  │   ├── MinhasOcorrenciasScreen.js
+  │   ├── NovaOcorrenciaScreen.js
+  │   ├── DetalheOcorrenciaScreen.js
+  │   ├── PerfilScreen.js
+  │   ├── MeusDadosScreen.js
+  │   ├── AlterarSenhaScreen.js
+  │   ├── SuporteScreen.js
+  │   ├── CreditosScreen.js
+  │   └── admin/
+  │       ├── GestaoUsuariosScreen.js
+  │       └── DetalheUsuarioScreen.js
+  ├── services/
+  │   ├── supabase.js           — Inicialização do cliente Supabase
+  │   ├── ocorrenciasService.js — API de ocorrências
+  │   ├── categoriasService.js  — API de categorias
+  │   └── adminService.js       — API de operações administrativas
+  ├── hooks/
+  │   └── usePermissions.js     — Hook de verificação de permissões RBAC
+  ├── components/
+  │   └── PermissionGuard.js    — Componente de renderização condicional por permissão
+  └── utils/
+      └── mensagensErro.js      — Formatação de mensagens de erro
+
+================================================================================

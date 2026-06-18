@@ -1,0 +1,130 @@
+================================================================================
+      CONFIGURAÇÕES DE AMBIENTE — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Este documento descreve todas as variáveis de ambiente necessárias para executar
+o projeto e fornece o template do arquivo `.env.example`.
+
+--------------------------------------------------------------------------------
+CONCEITO IMPORTANTE: VARIÁVEIS NO EXPO
+--------------------------------------------------------------------------------
+
+O Expo/React Native NÃO tem acesso ao sistema de variáveis de ambiente do Node.js
+da mesma forma que aplicações web. Para expor uma variável ao código do app, ela
+DEVE ser prefixada com EXPO_PUBLIC_.
+
+  ✅  EXPO_PUBLIC_SUPABASE_URL    → acessível no app via process.env
+  ❌  SUPABASE_URL                → NÃO acessível no código do app
+
+As variáveis SEM o prefixo EXPO_PUBLIC_ são acessíveis apenas em scripts de
+build (eas.json, plugins de configuração), nunca no código React Native.
+
+--------------------------------------------------------------------------------
+ARQUIVO .env.example (COPIAR E RENOMEAR PARA .env)
+--------------------------------------------------------------------------------
+
+# ==============================================================================
+# SISTEMA DE OCORRÊNCIAS — VARIÁVEIS DE AMBIENTE
+# ==============================================================================
+# Copie este arquivo para .env e preencha com suas credenciais.
+# NUNCA versione o arquivo .env no Git.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# SUPABASE — Backend as a Service
+# Encontre estas credenciais em:
+# Painel do Supabase → Seu Projeto → Project Settings → API
+# ------------------------------------------------------------------------------
+
+# URL do seu projeto Supabase (formato: https://XXXXXXXXXXXX.supabase.co)
+EXPO_PUBLIC_SUPABASE_URL=https://SEU_PROJECT_ID.supabase.co
+
+# Chave pública anônima (anon/public key) — segura para uso no client-side
+# Começa com "eyJ..." (token JWT)
+EXPO_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.SEU_TOKEN_AQUI
+
+# ==============================================================================
+# FIM DO ARQUIVO .env.example
+# ==============================================================================
+
+--------------------------------------------------------------------------------
+DESCRIÇÃO DETALHADA DAS VARIÁVEIS
+--------------------------------------------------------------------------------
+
+EXPO_PUBLIC_SUPABASE_URL
+  Tipo        : String (URL)
+  Obrigatório : SIM
+  Exemplo     : https://abcdefghijklmnop.supabase.co
+  Onde obter  : Supabase Dashboard → Project Settings → API → Project URL
+  Usado em    : src/services/supabase.js (inicialização do cliente Supabase)
+  Impacto se ausente: App não consegue conectar ao backend. Todas as telas
+                      que dependem de dados (Login, Home, etc.) falharão.
+
+EXPO_PUBLIC_SUPABASE_ANON_KEY
+  Tipo        : String (JWT)
+  Obrigatório : SIM
+  Exemplo     : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+  Onde obter  : Supabase Dashboard → Project Settings → API → anon (public)
+  Usado em    : src/services/supabase.js (inicialização do cliente Supabase)
+  Segurança   : Esta é a chave PÚBLICA — projetada para uso no client-side.
+                As políticas RLS do Supabase controlam o que cada usuário
+                autenticado pode acessar, independente de quem tem esta chave.
+  Impacto se ausente: Todas as requisições ao Supabase retornarão erro 401.
+
+--------------------------------------------------------------------------------
+CHAVE QUE NUNCA DEVE IR PARA O APP MOBILE
+--------------------------------------------------------------------------------
+
+SUPABASE_SERVICE_ROLE_KEY (NÃO USAR NO APP)
+  Esta chave bypassa completamente o RLS e tem acesso administrativo total
+  ao banco de dados. Ela é exclusiva para uso em:
+    - Scripts de servidor (Node.js backend)
+    - Edge Functions do Supabase
+    - Ambiente de CI/CD para migrações
+  JAMAIS inclua esta chave em código mobile ou web client-side.
+
+--------------------------------------------------------------------------------
+CONFIGURAÇÃO NO ARQUIVO supabase.js
+--------------------------------------------------------------------------------
+
+O arquivo src/services/supabase.js utiliza as variáveis assim:
+
+  import { createClient } from '@supabase/supabase-js';
+
+  const supabaseUrl  = process.env.EXPO_PUBLIC_SUPABASE_URL;
+  const supabaseKey  = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+  export const supabase = createClient(supabaseUrl, supabaseKey);
+
+--------------------------------------------------------------------------------
+.gitignore — ENTRADAS OBRIGATÓRIAS
+--------------------------------------------------------------------------------
+
+Certifique-se de que o arquivo .gitignore na raiz do projeto contém:
+
+  # Variáveis de ambiente — NUNCA versionar
+  .env
+  .env.local
+  .env.production
+
+  # Dependências
+  node_modules/
+
+  # Build outputs
+  .expo/
+  dist/
+  build/
+
+--------------------------------------------------------------------------------
+COMO OBTER AS CREDENCIAIS DO SUPABASE
+--------------------------------------------------------------------------------
+
+1. Acesse https://supabase.com e faça login
+2. Selecione o projeto "Sistema de Ocorrências" (ou crie um novo)
+3. No menu lateral, clique em "Project Settings" (ícone de engrenagem)
+4. Clique na aba "API"
+5. Copie:
+   - "Project URL"    → EXPO_PUBLIC_SUPABASE_URL
+   - "anon (public)"  → EXPO_PUBLIC_SUPABASE_ANON_KEY
+
+================================================================================

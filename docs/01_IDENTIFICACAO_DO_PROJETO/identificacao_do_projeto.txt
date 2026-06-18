@@ -1,0 +1,118 @@
+================================================================================
+          IDENTIFICAÇÃO DO PROJETO — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+--------------------------------------------------------------------------------
+1. DADOS DO PROJETO
+--------------------------------------------------------------------------------
+
+Nome do Projeto        : Sistema de Ocorrências
+Subtítulo              : Plataforma Mobile de Registro e Gestão de Ocorrências Institucionais
+Tipo de Projeto        : Aplicativo Mobile (Android / iOS)
+Modalidade             : Projeto de Extensão — Fábrica de Software
+Versão Atual           : 1.0.0
+Repositório            : [Inserir URL do repositório Git]
+
+--------------------------------------------------------------------------------
+2. INTEGRANTES
+--------------------------------------------------------------------------------
+
+Integrante 1
+  Nome Completo  : Kauê Kanagusko Ruiz
+  Curso          : Ciência da Computação
+  Função no Projeto: Desenvolvimento Frontend Mobile, Arquitetura de Navegação,
+                     Integração com Supabase Auth e RBAC, UI/UX das telas
+
+Integrante 2
+  Nome Completo  : Gerson de Oliveira Lopes Jr.
+  Curso          : Ciência da Computação
+  Função no Projeto: [Inserir funções e responsabilidades de Gerson]
+
+--------------------------------------------------------------------------------
+3. ORIENTAÇÃO E COORDENAÇÃO
+--------------------------------------------------------------------------------
+
+Professor Coordenador  : Prof. Dr. Elvio Gilberto da Silva
+Professores Colaboradores:
+  - Prof. Me. Luis Felipe Grael Tinós
+  - Profª. Esp. Camila Pellizon Floret
+
+Instituição            : [Inserir nome da instituição de ensino]
+Departamento / Curso   : Ciência da Computação
+Período de Desenvolvimento: [Inserir semestre/ano — ex: 1º Semestre de 2025]
+
+--------------------------------------------------------------------------------
+4. TEMA E PROPÓSITO
+--------------------------------------------------------------------------------
+
+Tema                   : Sistema de Ocorrências
+Categoria              : Gestão Institucional / Governança
+
+Propósito do Aplicativo:
+  O Sistema de Ocorrências é uma aplicação mobile desenvolvida para digitalizar e
+  centralizar o processo de registro, acompanhamento e resolução de ocorrências
+  institucionais. O app permite que alunos, professores e gestores registrem
+  incidents (incidentes, solicitações ou eventos de atenção) de forma estruturada,
+  com rastreabilidade de status e controle de acesso baseado em perfis.
+
+  O sistema elimina fluxos manuais baseados em papel ou e-mail, garantindo
+  transparência no ciclo de vida de cada ocorrência — desde a abertura até o
+  encerramento — com histórico auditável e diferenciação de responsabilidades por
+  nível de acesso (RBAC).
+
+--------------------------------------------------------------------------------
+5. TECNOLOGIAS UTILIZADAS
+--------------------------------------------------------------------------------
+
+Camada Mobile (Frontend):
+  - React Native 0.81.5      — Framework principal para desenvolvimento mobile
+  - Expo SDK 54.0.33         — Plataforma de build, device APIs e toolchain
+  - React 19.1.0             — Biblioteca de UI e gerenciamento de estado local
+
+Navegação:
+  - @react-navigation/native        — Núcleo de navegação
+  - @react-navigation/native-stack  — Stack de telas nativas
+  - @react-navigation/bottom-tabs   — Navegação por abas inferiores
+
+Backend como Serviço (BaaS):
+  - Supabase                 — Plataforma BaaS (PostgreSQL + Auth + Storage)
+    · Autenticação de usuários (e-mail/senha, recuperação de senha, MFA-ready)
+    · Banco de dados relacional (PostgreSQL) com Row Level Security (RLS)
+    · Storage para anexos e mídias de ocorrências
+
+Utilitários e Componentes:
+  - @expo/vector-icons (Ionicons) — Biblioteca de ícones
+  - react-native-safe-area-context — Tratamento de safe area (notch, barra de status)
+  - react-native-screens            — Otimização de performance de telas nativas
+
+Linguagem               : JavaScript (ECMAScript 2022+), JSX
+Gerenciador de Pacotes  : npm
+
+--------------------------------------------------------------------------------
+6. OBSERVAÇÕES IMPORTANTES DE ENTREGA
+--------------------------------------------------------------------------------
+
+1. VARIÁVEIS DE AMBIENTE:
+   O projeto requer um arquivo `.env` na raiz com as credenciais do Supabase.
+   NÃO versionar o arquivo `.env` real. Consultar `configuracoes_do_ambiente.txt`
+   no diretório 05_BIBLIOTECAS_DEPENDENCIAS_E_CONFIGURACOES.
+
+2. BANCO DE DADOS:
+   As tabelas do Supabase (perfis, roles, perfil_roles, role_permissoes, permissoes)
+   devem estar criadas e com as políticas RLS configuradas antes da execução.
+   Scripts de migração: [Inserir caminho para os scripts SQL, se houver]
+
+3. EXECUÇÃO LOCAL:
+   Seguir o passo a passo em 03_ORIENTACOES_DE_INSTALACAO_E_EXECUCAO/README_GERAL.md
+   antes de tentar rodar o projeto.
+
+4. COMPATIBILIDADE:
+   Testado em Android (API 26+) e iOS (14+) via Expo Go e builds de desenvolvimento.
+   Para builds de produção, configurar o EAS Build da Expo.
+
+5. POLÍTICA DE ACESSO:
+   O sistema possui 6 níveis de perfil de acesso. O perfil inicial de novos usuários
+   cadastrados é "aluno". A promoção de perfis é feita exclusivamente por
+   administradores via Painel Administrativo.
+
+================================================================================

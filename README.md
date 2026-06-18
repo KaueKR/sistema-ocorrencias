@@ -171,9 +171,13 @@ sistema-ocorrencias/
 │   │   ├── ForgotPasswordScreen.js     # Recuperação de senha (3 etapas)
 │   │   ├── HomeScreen.js               # Dashboard com contadores e lista recente
 │   │   ├── MinhasOcorrenciasScreen.js  # Mural de ocorrências com filtro
-│   │   ├── NovaOcorrenciaScreen.js     # Formulário de criação de ocorrência
+│   │   ├── NovaOcorrenciaScreen.js     # Formulário com date picker e image picker
 │   │   ├── DetalheOcorrenciaScreen.js  # Detalhes, histórico e ações por status
-│   │   ├── PerfilScreen.js             # Perfil, role atual e acesso admin
+│   │   ├── PerfilScreen.js             # Menu do usuário com navegação para sub-telas
+│   │   ├── MeusDadosScreen.js          # Edição de nome; e-mail/role somente leitura
+│   │   ├── AlterarSenhaScreen.js       # Troca de senha com reautenticação e validação
+│   │   ├── SuporteScreen.js            # Chamado de suporte com dropdown customizado (Modal)
+│   │   ├── CreditosScreen.js           # Créditos do projeto e equipe
 │   │   └── admin/
 │   │       ├── GestaoUsuariosScreen.js # Painel: listagem e busca de usuários
 │   │       └── DetalheUsuarioScreen.js # Painel: edição de role e setor do usuário
@@ -204,7 +208,15 @@ sistema-ocorrencias/
 ├── app.json                            # Configurações do Expo (nome, ícone, splash)
 ├── index.js                            # Ponto de entrada do app
 ├── package.json                        # Dependências e scripts
-└── .env                                # Variáveis de ambiente (não versionar)
+├── .env                                # Variáveis de ambiente (não versionar)
+├── .env.example                        # Template de variáveis de ambiente
+└── docs/                               # Documentação técnica completa
+    ├── 01_IDENTIFICACAO_DO_PROJETO/
+    ├── 02_DOCUMENTACAO_DO_PROJETO/
+    ├── 03_ORIENTACOES_DE_INSTALACAO_E_EXECUCAO/
+    │   └── MOBILE/
+    ├── 05_BIBLIOTECAS_DEPENDENCIAS_E_CONFIGURACOES/
+    └── 10_RELATO_DE_EXPERIENCIA_DO_ESTUDANTE/
 ```
 
 ---
@@ -359,6 +371,10 @@ App
     │   └── Perfil           (PerfilScreen)
     └── Telas em Stack (sobre as abas)
         ├── DetalheOcorrencia
+        ├── MeusDados         ← acessado via menu do Perfil
+        ├── AlterarSenha      ← acessado via menu do Perfil
+        ├── Suporte           ← acessado via menu do Perfil
+        ├── Creditos          ← acessado via menu do Perfil
         ├── GestaoUsuarios    ← apenas para admins
         └── DetalheUsuario    ← apenas para admins
 ```
@@ -418,9 +434,35 @@ App
 #### PerfilScreen
 - Avatar com iniciais e indicador de online
 - Badge com a role atual do usuário (label traduzido: Aluno, Professor etc.)
-- Menu de navegação: Meus Dados, Alterar Senha, Suporte
+- Menu de navegação com rotas individuais: Meus Dados, Alterar Senha, Suporte, Créditos
 - **Painel Administrativo** — item visível somente para usuários com `isAdmin = true`
 - Logout com confirmação
+
+#### MeusDadosScreen
+- Header escuro com avatar e e-mail do usuário logado
+- Campo editável de nome completo com underline vermelho; botão "Salvar" ativo apenas quando o valor muda
+- E-mail e perfil de acesso somente leitura com badges visuais de bloqueio
+- Salva em `supabase.auth.updateUser` (atualiza `user_metadata`) e na tabela `perfis`, depois chama `carregarPerfil` para refresco de contexto
+
+#### AlterarSenhaScreen
+- Três campos de senha com toggle de visibilidade individual
+- Card de requisitos da nova senha renderizado dinamicamente (mínimo 8 caracteres, letra maiúscula, número)
+- Banner de erro inline quando confirmação não coincide
+- Reautentica o usuário com `signInWithPassword` antes de chamar `atualizarSenha` — evita alteração de senha por sessão roubada
+
+#### SuporteScreen
+- Banner informativo com o e-mail do usuário vinculado ao chamado
+- Dropdown de categoria implementado com `Modal` nativo (sem biblioteca externa de Picker), com lista de opções e indicador de seleção ativa
+- Campo de texto multilinha com contador de até 1000 caracteres
+- Botão de envio desabilitado enquanto tipo e mínimo de texto não forem preenchidos
+- Tela de confirmação de sucesso com ícone verde dedicado após envio
+- Stub de API comentado pronto para integração com tabela `suporte` no Supabase
+
+#### CreditosScreen
+- Informações do Projeto de Extensão Fábrica de Software e sua finalidade
+- Card de corpo docente com avatar colorido diferenciado por função (vermelho para coordenador, roxo para colaboradores)
+- Card de equipe de desenvolvimento com iniciais geradas a partir do nome
+- Botão de voltar no fluxo normal do layout (sem `position: 'absolute'`) garantindo hitbox correta
 
 #### GestaoUsuariosScreen *(admin only)*
 - Header escuro com campo de busca embutido e badge com total de usuários

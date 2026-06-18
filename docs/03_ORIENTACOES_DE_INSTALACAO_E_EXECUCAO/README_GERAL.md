@@ -19,7 +19,7 @@ Antes de começar, certifique-se de que as ferramentas abaixo estão instaladas 
 ## 1. Clonar o Repositório
 
 ```bash
-git clone [URL_DO_REPOSITÓRIO]
+git clone https://github.com/KaueKR/sistema-ocorrencias.git
 cd sistema-ocorrencias
 ```
 

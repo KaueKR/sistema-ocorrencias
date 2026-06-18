@@ -11,7 +11,7 @@ Subtítulo              : Plataforma Mobile de Registro e Gestão de Ocorrência
 Tipo de Projeto        : Aplicativo Mobile (Android / iOS)
 Modalidade             : Projeto de Extensão — Fábrica de Software
 Versão Atual           : 1.0.0
-Repositório            : [Inserir URL do repositório Git]
+Repositório            : https://github.com/KaueKR/sistema-ocorrencias
 
 --------------------------------------------------------------------------------
 2. INTEGRANTES
@@ -26,7 +26,8 @@ Integrante 1
 Integrante 2
   Nome Completo  : Gerson de Oliveira Lopes Jr.
   Curso          : Ciência da Computação
-  Função no Projeto: [Inserir funções e responsabilidades de Gerson]
+  Função no Projeto: Desenvolvimento Frontend Mobile, Arquitetura de Navegação,
+                     Integração com Supabase Auth e RBAC, UI/UX das telas
 
 --------------------------------------------------------------------------------
 3. ORIENTAÇÃO E COORDENAÇÃO

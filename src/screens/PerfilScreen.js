@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, StatusBar, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, StatusBar, ScrollView, Platform } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
@@ -32,9 +32,18 @@ export default function PerfilScreen({ navigation }) {
   const iniciais = nomeCompleto.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
 
   const handleSair = () => {
+    // No web, window.confirm() é bloqueado silenciosamente pelo Chrome.
+    if (Platform.OS === 'web') {
+      sair();
+      return;
+    }
     Alert.alert('Sair', 'Tem certeza que deseja desconectar?', [
       { text: 'Cancelar', style: 'cancel' },
-      { text: 'Sair', style: 'destructive', onPress: sair },
+      {
+        text: 'Sair',
+        style: 'destructive',
+        onPress: () => { sair(); },
+      },
     ]);
   };
 

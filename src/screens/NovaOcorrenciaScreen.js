@@ -35,6 +35,7 @@ export default function NovaOcorrenciaScreen({ navigation }) {
   const [foto, setFoto] = useState(null);
   const [loading, setLoading] = useState(false);
   const [fetchingConfig, setFetchingConfig] = useState(true);
+  const [erroInline, setErroInline] = useState('');
 
   useEffect(() => {
     async function loadData() {
@@ -65,18 +66,32 @@ export default function NovaOcorrenciaScreen({ navigation }) {
   };
 
   const handleSubmit = async () => {
+    setErroInline('');
     if (!titulo || !descricao || !local || !categoriaSelecionada) {
-      Alert.alert('Atenção', 'Preencha todos os campos obrigatórios e selecione a categoria.');
+      setErroInline('Preencha todos os campos obrigatórios e selecione uma categoria.');
       return;
     }
     setLoading(true);
     try {
-      await criarOcorrencia({ titulo, descricao, local, urgencia, categoria_id: categoriaSelecionada.id }, usuario.id, foto?.base64);
-      Alert.alert('✅ Sucesso!', 'Sua ocorrência foi registrada e encaminhada ao setor responsável.', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
+      await criarOcorrencia(
+        { titulo, descricao, local, urgencia, categoria_id: categoriaSelecionada.id },
+        usuario.id,
+        foto?.base64
+      );
+      // Navega primeiro — garante que funciona em qualquer plataforma.
+      // No mobile exibe o Alert de confirmação após a navegação.
+      if (Platform.OS === 'web') {
+        navigation.goBack();
+      } else {
+        Alert.alert(
+          'Sucesso!',
+          'Sua ocorrência foi registrada e encaminhada ao setor responsável.',
+          [{ text: 'OK', onPress: () => navigation.goBack() }]
+        );
+      }
     } catch (err) {
-      Alert.alert('Erro', 'Ocorreu um erro ao salvar: ' + err.message);
+      const msg = err?.message || 'Erro desconhecido. Verifique sua conexão e tente novamente.';
+      setErroInline(msg);
     } finally {
       setLoading(false);
     }
@@ -224,6 +239,13 @@ export default function NovaOcorrenciaScreen({ navigation }) {
           )}
         </View>
 
+        {erroInline ? (
+          <View style={styles.erroBanner}>
+            <Ionicons name="alert-circle-outline" size={18} color="#EF1D26" />
+            <Text style={styles.erroText}>{erroInline}</Text>
+          </View>
+        ) : null}
+
         <TouchableOpacity
           style={[styles.submitBtn, loading && { opacity: 0.7 }]}
           onPress={handleSubmit}
@@ -291,8 +313,15 @@ const styles = StyleSheet.create({
     borderRadius: 20, flexDirection: 'row', alignItems: 'center', gap: 6,
   },
   removerFotoText: { color: '#fff', fontWeight: '700', fontSize: 13 },
+  erroBanner: {
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    backgroundColor: '#FFF0F0', borderRadius: 12, padding: 14,
+    marginHorizontal: 20, marginTop: 24,
+    borderLeftWidth: 3, borderLeftColor: '#EF1D26',
+  },
+  erroText: { flex: 1, fontSize: 13, color: '#EF1D26', fontWeight: '500', lineHeight: 18 },
   submitBtn: {
-    backgroundColor: '#EF1D26', margin: 20, marginTop: 32,
+    backgroundColor: '#EF1D26', margin: 20, marginTop: 16,
     padding: 18, borderRadius: 14, alignItems: 'center',
     flexDirection: 'row', justifyContent: 'center',
     elevation: 4, shadowColor: '#EF1D26', shadowOffset: { width: 0, height: 4 },

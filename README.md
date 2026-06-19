@@ -71,10 +71,11 @@ Aberta → Em Análise → Em Andamento → Resolvida → Encerrada
 - Atalho para criar nova ocorrência
 - Atualização por gesto de pull-to-refresh
 
-### Perfil
+### Área do Usuário (Perfil)
 - Visualização dos dados do usuário com badge de role atual
+- Sub-telas acessíveis pelo menu: **Meus Dados**, **Alterar Senha**, **Suporte** e **Créditos**
 - Acesso ao Painel Administrativo (visível apenas para admins)
-- Logout com confirmação
+- Logout com comportamento multiplataforma: no mobile exibe confirmação via `Alert`; no web executa diretamente (Chrome bloqueia `window.confirm` silenciosamente)
 
 ### Painel Administrativo (acesso restrito)
 - Listagem de todos os usuários com busca por nome e filtros por role
@@ -198,12 +199,15 @@ sistema-ocorrencias/
 │   ├── 09_rls_fotos_global.sql         # RLS da tabela fotos_ocorrencias
 │   ├── 13_fix_definitivo.sql           # Fix completo: categoria restrita + RLS final (executar após 09)
 │   ├── 14_diagnostico_rls.sql          # Queries de diagnóstico do estado das políticas RLS
-│   └── 15_correcao_categoria_restrita.sql # Correção do nome e da política conflitante em categorias
+│   ├── 15_correcao_categoria_restrita.sql # Correção do nome e da política conflitante em categorias
+│   └── 16_fix_cancelar_ocorrencia.sql  # Fix: CHECK constraint de status + política UPDATE para o dono
 ├── assets/
 │   ├── icon.png
 │   ├── splash-icon.png
 │   ├── adaptive-icon.png
-│   └── favicon.png
+│   ├── favicon.png
+│   ├── logo-unisagrado.png             # Logo da Unisagrado (tela de Créditos e Login)
+│   └── logo-coordenadoria-extensao.jpg # Logo da Coordenadoria de Extensão (tela de Créditos)
 ├── App.js                              # Componente raiz com providers
 ├── app.json                            # Configurações do Expo (nome, ícone, splash)
 ├── index.js                            # Ponto de entrada do app
@@ -276,6 +280,7 @@ Execute os scripts SQL localizados na pasta `sql/` no editor SQL do Supabase (**
 | 7 | `09_rls_fotos_global.sql` | Políticas RLS da tabela `fotos_ocorrencias` |
 | 8 | `13_fix_definitivo.sql` | **Obrigatório:** define a categoria restrita, permissão `ver_restrito`, funções e RLS definitivas |
 | 9 | `15_correcao_categoria_restrita.sql` | Marca "Problema com Aluno" como `restrito = true` e remove política conflitante |
+| 10 | `16_fix_cancelar_ocorrencia.sql` | **Obrigatório:** corrige o CHECK constraint de `status` (inclui `'cancelada'`) e adiciona política UPDATE para o dono da ocorrência |
 
 > **Nota:** os arquivos `10`, `11` e `12` foram substituídos pelo `13_fix_definitivo.sql`, que consolida todas as correções de forma idempotente. Os arquivos `14` e `15` são utilitários de diagnóstico e correção — não precisam ser executados em novos projetos, apenas em instâncias que passaram por tentativas de configuração anteriores.
 
@@ -420,15 +425,19 @@ App
 - Seletor de urgência com cores: Baixa / Média / Alta
 - Upload de foto via câmera ou galeria (armazenada no Supabase Storage)
 - Prévia da foto com opção de remoção antes do envio
+- **Feedback multiplataforma**: erros de validação e de serviço exibidos via banner inline vermelho (nunca via `Alert`); ao criar com sucesso, no mobile exibe `Alert`, no web navega diretamente
 
 #### DetalheOcorrenciaScreen
 - Exibição completa: título, categoria, setor, local, urgência, descrição e foto
-- Linha do tempo de histórico de status com usuário responsável e observações
-- Barra de ação com botões condicionais por status:
-  - **Concluir** — disponível para o dono quando a ocorrência está em aberto
-  - **Reabrir** — disponível quando status é `resolvida`
-  - **Cancelar** — abre modal para inserção do motivo
-  - **Excluir** — remove ocorrência e fotos (somente dono e somente se `aberta`)
+- Linha do tempo de histórico de status com usuário responsável e observações de cada transição
+- Barra de ação com botões condicionais por status e role:
+  - **Concluir** — disponível para o dono quando a ocorrência não está encerrada
+  - **Marcar Resolvida** — disponível para staff com `ocorrencias.atualizar_status` (gestor, técnico, admin)
+  - **Reabrir** — disponível para o dono quando status é `resolvida`
+  - **Cancelar** — abre modal bottom-sheet nativo para inserção do motivo; só disponível para status em aberto
+  - **Excluir** — remove ocorrência e fotos permanentemente (dono com status `aberta`, ou staff com `ocorrencias.deletar`)
+- **Modal de confirmação customizado** — caixa centralizada na tela com ícone contextual (azul para ações neutras, vermelho para exclusão), título, descrição e botões com label específico da ação (ex: "Sim, encerrar", "Excluir"). Substitui completamente `Alert.alert` e `window.confirm`
+- **Banner de feedback inline** — após cada ação, exibe um banner flutuante verde (sucesso) ou vermelho (erro) por 3,5 segundos. Posicionado acima da barra de ação ou no rodapé da tela quando a barra não está visível
 - Acesso direto por ID bloqueado pelo RLS para categorias restritas
 
 #### PerfilScreen
@@ -462,7 +471,8 @@ App
 - Informações do Projeto de Extensão Fábrica de Software e sua finalidade
 - Card de corpo docente com avatar colorido diferenciado por função (vermelho para coordenador, roxo para colaboradores)
 - Card de equipe de desenvolvimento com iniciais geradas a partir do nome
-- Botão de voltar no fluxo normal do layout (sem `position: 'absolute'`) garantindo hitbox correta
+- Card de instituição com logos da **Unisagrado** e da **Coordenadoria de Extensão** em alta resolução
+- Botão de voltar no fluxo normal do layout (sem `position: 'absolute'`) garantindo hitbox correta em todos os dispositivos
 
 #### GestaoUsuariosScreen *(admin only)*
 - Header escuro com campo de busca embutido e badge com total de usuários
@@ -719,6 +729,9 @@ As verificações de acesso são aplicadas em três níveis complementares:
 - **RPC atômica para troca de role** — a função `atribuir_role_usuario` encapsula DELETE + INSERT em uma única transação, prevenindo estados inconsistentes.
 - **`useFocusEffect` + `useEffect`** — telas de listagem recarregam ao receber foco (para dados atualizados ao voltar de edições) e também ao detectar mudança em `perfilCarregado` (para dados corretos no carregamento inicial).
 - **Filtro de role no cliente** — a listagem de usuários carrega todos e filtra localmente, garantindo que as contagens dos chips de filtro sejam sempre corretas sem múltiplas requisições ao banco.
+- **Compatibilidade multiplataforma (`Platform.OS`)** — `Alert.alert` com múltiplos botões é bloqueado silenciosamente pelo Chrome ao rodar via `expo start --web` (mapeia para `window.confirm`). Toda confirmação de ação crítica usa um **modal customizado centralizado** (componente `Modal` do React Native) com título, mensagem, ícone contextual e botões com label específico. Erros e feedbacks de sucesso são exibidos via **banner inline** com auto-dismiss de 3,5 s — nunca via `alert` do sistema. Logout usa `Platform.OS === 'web'` para executar `sair()` diretamente no web sem diálogo.
+- **`sair()` com limpeza imediata de estado** — o `AuthContext` limpa `usuario`, `sessao` e o perfil RBAC localmente antes de aguardar o `supabase.auth.signOut()`, garantindo que a navegação para a tela de Login ocorra imediatamente sem depender do evento `SIGNED_OUT` do servidor.
+- **Modal de confirmação reutilizável em `DetalheOcorrenciaScreen`** — estado `confirmDialog` com `pedirConfirmacao({ titulo, mensagem, confirmLabel, tipo, onConfirm })` e `fecharConfirmacao()`. Substitui por completo o padrão `Alert.alert → window.confirm` em todas as ações destrutivas, funcionando de forma idêntica no mobile e no web.
 
 ---
 

@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "Bash(tree -L 4 -a /c/Users/kille/Documents/sistema-ocorrencias --ignore node_modules --ignore .git --ignore .expo)"
-    ]
-  }
-}

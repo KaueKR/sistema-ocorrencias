@@ -6,28 +6,10 @@ Projeto de Extensão Fábrica de Software — 1º Sem. 2026
 Aplicativo Mobile (React Native + Expo)
 
 --------------------------------------------------------------------------------
-ARQUIVO DO VÍDEO
---------------------------------------------------------------------------------
 
-  Nome esperado: video_apresentacao.mp4 (nesta mesma pasta)
-
-  PENDÊNCIA: o vídeo de demonstração ainda precisa ser gravado pelo grupo
-  (não pode ser produzido a partir da documentação). Use o roteiro sugerido
-  em roteiro_video.txt para a gravação.
-
---------------------------------------------------------------------------------
-LINK DO VÍDEO (preencher se hospedado)
---------------------------------------------------------------------------------
-
-  Caso o vídeo seja muito grande para o Drive, hospede-o (YouTube não listado,
-  Google Drive, OneDrive, etc.) e informe o link abaixo:
-
-  Plataforma : [INSERIR — ex: YouTube / Google Drive]
-  Link       : [INSERIR LINK]
-  Duração    : [INSERIR — ex: 2 min 30 s]
-  Data       : [INSERIR DATA]
-
-  Atenção: confira se a permissão de acesso do link permite que os professores
-  responsáveis assistam ao vídeo sem solicitar autorização.
+  Plataforma : Google Drive
+  Link       : https://drive.google.com/file/d/1cbQJBHQS9gNVuwKvCn2jcjK0EUEGZ4KS/view?usp=drive_link
+  Duração    : 11 min 30 s
+  Data       : 18/06/20266
 
 ================================================================================

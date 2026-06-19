@@ -130,10 +130,19 @@ export function AuthProvider({ children }) {
   }
 
   async function sair() {
+    // Limpa o estado local imediatamente — a navegação para Login ocorre aqui,
+    // sem depender do evento SIGNED_OUT chegar do servidor.
+    setUsuario(null);
+    setSessao(null);
+    limparPerfil();
+
+    // Invalida a sessão no servidor em background.
     try {
       await supabase.auth.signOut();
     } catch {
-      await supabase.auth.signOut({ scope: 'local' });
+      try {
+        await supabase.auth.signOut({ scope: 'local' });
+      } catch {}
     }
   }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, ActivityIndicator, Image,
-  TouchableOpacity, Alert, TextInput, Modal
+  TouchableOpacity, TextInput, Modal, Platform
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '../contexts/AuthContext';
@@ -36,6 +36,12 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
   const [actionLoading, setActionLoading] = useState(false);
   const [cancelModalVisible, setCancelModalVisible] = useState(false);
   const [cancelMotivo, setCancelMotivo] = useState('');
+  const [feedback, setFeedback] = useState(null); // { tipo: 'sucesso'|'erro', texto: string }
+  const [confirmDialog, setConfirmDialog] = useState({
+    visible: false, titulo: '', mensagem: '', confirmLabel: 'Confirmar',
+    tipo: 'neutro', // 'neutro' | 'destrutivo'
+    onConfirm: null,
+  });
 
   const fetchData = async () => {
     try {
@@ -51,9 +57,22 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
   useEffect(() => { fetchData(); }, [ocorrenciaId]);
 
 
+  const mostrarFeedback = (tipo, texto) => {
+    setFeedback({ tipo, texto });
+    setTimeout(() => setFeedback(null), 3500);
+  };
+
+  const pedirConfirmacao = ({ titulo, mensagem, confirmLabel = 'Confirmar', tipo = 'neutro', onConfirm }) => {
+    setConfirmDialog({ visible: true, titulo, mensagem, confirmLabel, tipo, onConfirm });
+  };
+
+  const fecharConfirmacao = () => {
+    setConfirmDialog(prev => ({ ...prev, visible: false, onConfirm: null }));
+  };
+
   const handleCancelar = async () => {
     if (!cancelMotivo.trim()) {
-      Alert.alert('Atenção', 'Por favor, informe o motivo do cancelamento.');
+      mostrarFeedback('erro', 'Por favor, informe o motivo do cancelamento.');
       return;
     }
     setActionLoading(true);
@@ -62,114 +81,98 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
       setCancelModalVisible(false);
       setCancelMotivo('');
       await fetchData();
-      Alert.alert('Ocorrência Cancelada', 'O status foi atualizado para Cancelada.');
+      mostrarFeedback('sucesso', 'Ocorrência cancelada com sucesso.');
     } catch (err) {
-      Alert.alert('Erro', 'Não foi possível cancelar: ' + err.message);
+      mostrarFeedback('erro', 'Não foi possível cancelar: ' + (err?.message || 'Erro desconhecido'));
     } finally {
       setActionLoading(false);
     }
   };
 
   const handleConcluir = () => {
-    Alert.alert(
-      'Concluir Ocorrência',
-      'Você confirma que este problema foi resolvido satisfatoriamente?',
-      [
-        { text: 'Ainda não',  style: 'cancel' },
-        {
-          text: 'Sim, encerrar!',
-          onPress: async () => {
-            setActionLoading(true);
-            try {
-              await atualizarStatusOcorrencia(ocorrenciaId, 'encerrada', usuario.id, 'Encerrada pelo usuário.', data.status);
-              await fetchData();
-              Alert.alert('✅ Encerrada!', 'Sua ocorrência foi concluída com sucesso.');
-            } catch (err) {
-              Alert.alert('Erro', err.message);
-            } finally {
-              setActionLoading(false);
-            }
-          }
-        },
-      ]
-    );
+    pedirConfirmacao({
+      titulo: 'Concluir Ocorrência',
+      mensagem: 'Você confirma que este problema foi resolvido satisfatoriamente?',
+      confirmLabel: 'Sim, encerrar',
+      tipo: 'neutro',
+      onConfirm: async () => {
+        fecharConfirmacao();
+        setActionLoading(true);
+        try {
+          await atualizarStatusOcorrencia(ocorrenciaId, 'encerrada', usuario.id, 'Encerrada pelo usuário.', data.status);
+          await fetchData();
+          mostrarFeedback('sucesso', 'Ocorrência encerrada com sucesso.');
+        } catch (err) {
+          mostrarFeedback('erro', err?.message || 'Não foi possível concluir a ocorrência.');
+        } finally {
+          setActionLoading(false);
+        }
+      },
+    });
   };
 
   const handleReabrir = () => {
-    Alert.alert(
-      'Reabrir Ocorrência',
-      'O problema não foi resolvido? Deseja reabrir este chamado?',
-      [
-        { text: 'Não', style: 'cancel' },
-        {
-          text: 'Sim, reabrir',
-          style: 'destructive',
-          onPress: async () => {
-            setActionLoading(true);
-            try {
-              await atualizarStatusOcorrencia(ocorrenciaId, 'aberta', usuario.id, 'Reaberta pelo usuário: problema persiste.', data.status);
-              await fetchData();
-              Alert.alert('Reaberta', 'Sua ocorrência foi reaberta e será reavaliada.');
-            } catch (err) {
-              Alert.alert('Erro', err.message);
-            } finally {
-              setActionLoading(false);
-            }
-          }
-        },
-      ]
-    );
+    pedirConfirmacao({
+      titulo: 'Reabrir Ocorrência',
+      mensagem: 'O problema não foi resolvido? Deseja reabrir este chamado para reavaliação?',
+      confirmLabel: 'Sim, reabrir',
+      tipo: 'neutro',
+      onConfirm: async () => {
+        fecharConfirmacao();
+        setActionLoading(true);
+        try {
+          await atualizarStatusOcorrencia(ocorrenciaId, 'aberta', usuario.id, 'Reaberta pelo usuário: problema persiste.', data.status);
+          await fetchData();
+          mostrarFeedback('sucesso', 'Ocorrência reaberta. Ela será reavaliada pela equipe.');
+        } catch (err) {
+          mostrarFeedback('erro', err?.message || 'Não foi possível reabrir a ocorrência.');
+        } finally {
+          setActionLoading(false);
+        }
+      },
+    });
   };
 
   const handleMarcarResolvida = () => {
-    Alert.alert(
-      'Marcar como Resolvida',
-      'Confirma que esta ocorrência foi resolvida?',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Sim, resolver',
-          onPress: async () => {
-            setActionLoading(true);
-            try {
-              await atualizarStatusOcorrencia(ocorrenciaId, 'resolvida', usuario.id, 'Marcada como resolvida pela equipe.', data.status);
-              await fetchData();
-              Alert.alert('Resolvida!', 'A ocorrência foi marcada como resolvida.');
-            } catch (err) {
-              Alert.alert('Erro', err.message);
-            } finally {
-              setActionLoading(false);
-            }
-          }
-        },
-      ]
-    );
+    pedirConfirmacao({
+      titulo: 'Marcar como Resolvida',
+      mensagem: 'Confirma que esta ocorrência foi tratada e o problema foi resolvido?',
+      confirmLabel: 'Sim, resolver',
+      tipo: 'neutro',
+      onConfirm: async () => {
+        fecharConfirmacao();
+        setActionLoading(true);
+        try {
+          await atualizarStatusOcorrencia(ocorrenciaId, 'resolvida', usuario.id, 'Marcada como resolvida pela equipe.', data.status);
+          await fetchData();
+          mostrarFeedback('sucesso', 'Ocorrência marcada como resolvida.');
+        } catch (err) {
+          mostrarFeedback('erro', err?.message || 'Não foi possível atualizar o status.');
+        } finally {
+          setActionLoading(false);
+        }
+      },
+    });
   };
 
   const handleExcluir = () => {
-    Alert.alert(
-      'Excluir Ocorrência',
-      'Tem certeza? Esta ação não pode ser desfeita e todos os dados serão removidos permanentemente.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Excluir',
-          style: 'destructive',
-          onPress: async () => {
-            setActionLoading(true);
-            try {
-              await excluirOcorrencia(ocorrenciaId, usuario.id);
-              Alert.alert('Excluída', 'A ocorrência foi removida com sucesso.');
-              navigation.goBack();
-            } catch (err) {
-              Alert.alert('Erro', 'Não foi possível excluir: ' + err.message);
-            } finally {
-              setActionLoading(false);
-            }
-          }
-        },
-      ]
-    );
+    pedirConfirmacao({
+      titulo: 'Excluir Ocorrência',
+      mensagem: 'Esta ação é irreversível. Todos os dados e anexos desta ocorrência serão removidos permanentemente.',
+      confirmLabel: 'Excluir',
+      tipo: 'destrutivo',
+      onConfirm: async () => {
+        fecharConfirmacao();
+        setActionLoading(true);
+        try {
+          await excluirOcorrencia(ocorrenciaId, usuario.id);
+          navigation.goBack();
+        } catch (err) {
+          mostrarFeedback('erro', 'Não foi possível excluir: ' + (err?.message || 'Erro desconhecido'));
+          setActionLoading(false);
+        }
+      },
+    });
   };
 
   if (loading) return <ActivityIndicator style={{ flex: 1 }} size="large" color="#EF1D26" />;
@@ -355,6 +358,26 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
         </View>
       )}
 
+      {feedback && (
+        <View style={[
+          styles.feedbackBanner,
+          feedback.tipo === 'sucesso' ? styles.feedbackSucesso : styles.feedbackErro,
+          { bottom: showActionBar ? 110 : 28 },
+        ]}>
+          <Ionicons
+            name={feedback.tipo === 'sucesso' ? 'checkmark-circle' : 'alert-circle'}
+            size={20}
+            color={feedback.tipo === 'sucesso' ? '#16a34a' : '#EF1D26'}
+          />
+          <Text style={[
+            styles.feedbackText,
+            { color: feedback.tipo === 'sucesso' ? '#16a34a' : '#EF1D26' },
+          ]}>
+            {feedback.texto}
+          </Text>
+        </View>
+      )}
+
       <Modal
         visible={cancelModalVisible}
         animationType="slide"
@@ -397,6 +420,47 @@ export default function DetalheOcorrenciaScreen({ route, navigation }) {
                 ) : (
                   <Text style={styles.modalBtnPrimaryText}>Confirmar Cancelamento</Text>
                 )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Modal de confirmação genérico */}
+      <Modal
+        visible={confirmDialog.visible}
+        animationType="fade"
+        transparent
+        onRequestClose={fecharConfirmacao}
+      >
+        <View style={styles.confirmOverlay}>
+          <View style={styles.confirmCard}>
+            <View style={[
+              styles.confirmIconWrapper,
+              confirmDialog.tipo === 'destrutivo' ? styles.confirmIconDestrutivo : styles.confirmIconNeutro,
+            ]}>
+              <Ionicons
+                name={confirmDialog.tipo === 'destrutivo' ? 'trash-outline' : 'help-circle-outline'}
+                size={32}
+                color={confirmDialog.tipo === 'destrutivo' ? '#EF1D26' : '#2563eb'}
+              />
+            </View>
+
+            <Text style={styles.confirmTitulo}>{confirmDialog.titulo}</Text>
+            <Text style={styles.confirmMensagem}>{confirmDialog.mensagem}</Text>
+
+            <View style={styles.confirmActions}>
+              <TouchableOpacity style={styles.confirmBtnSecundario} onPress={fecharConfirmacao}>
+                <Text style={styles.confirmBtnSecundarioText}>Voltar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.confirmBtnPrimario,
+                  confirmDialog.tipo === 'destrutivo' && styles.confirmBtnDestrutivo,
+                ]}
+                onPress={confirmDialog.onConfirm}
+              >
+                <Text style={styles.confirmBtnPrimarioText}>{confirmDialog.confirmLabel}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -514,4 +578,61 @@ const styles = StyleSheet.create({
     alignItems: 'center', backgroundColor: '#666666',
   },
   modalBtnPrimaryText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+
+  feedbackBanner: {
+    position: 'absolute', left: 20, right: 20,
+    borderRadius: 14, padding: 14,
+    flexDirection: 'row', alignItems: 'center', gap: 10,
+    elevation: 20,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12, shadowRadius: 10,
+    zIndex: 100,
+  },
+  feedbackSucesso: {
+    backgroundColor: '#f0fdf4', borderWidth: 1.5, borderColor: '#86efac',
+  },
+  feedbackErro: {
+    backgroundColor: '#FFF0F0', borderWidth: 1.5, borderColor: '#FFBBBB',
+  },
+  feedbackText: { flex: 1, fontSize: 14, fontWeight: '600', lineHeight: 20 },
+
+  confirmOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.55)',
+    alignItems: 'center', justifyContent: 'center',
+    paddingHorizontal: 28,
+  },
+  confirmCard: {
+    backgroundColor: '#fff', borderRadius: 24,
+    padding: 28, alignItems: 'center', width: '100%',
+    elevation: 24,
+    shadowColor: '#000', shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.18, shadowRadius: 20,
+  },
+  confirmIconWrapper: {
+    width: 72, height: 72, borderRadius: 36,
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 20,
+  },
+  confirmIconNeutro:   { backgroundColor: '#eff6ff' },
+  confirmIconDestrutivo: { backgroundColor: '#FFF0F0' },
+  confirmTitulo: {
+    fontSize: 20, fontWeight: '800', color: '#232323',
+    textAlign: 'center', marginBottom: 10,
+  },
+  confirmMensagem: {
+    fontSize: 14, color: '#555555', textAlign: 'center',
+    lineHeight: 22, marginBottom: 28,
+  },
+  confirmActions: { flexDirection: 'row', gap: 12, width: '100%' },
+  confirmBtnSecundario: {
+    flex: 1, paddingVertical: 14, borderRadius: 14,
+    alignItems: 'center', backgroundColor: '#F0F0F0',
+  },
+  confirmBtnSecundarioText: { color: '#555555', fontWeight: '700', fontSize: 15 },
+  confirmBtnPrimario: {
+    flex: 1, paddingVertical: 14, borderRadius: 14,
+    alignItems: 'center', backgroundColor: '#2563eb',
+  },
+  confirmBtnDestrutivo: { backgroundColor: '#EF1D26' },
+  confirmBtnPrimarioText: { color: '#fff', fontWeight: '700', fontSize: 15 },
 });

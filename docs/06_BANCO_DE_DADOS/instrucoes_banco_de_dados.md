@@ -50,7 +50,8 @@ etapa acompanham o código-fonte na pasta `sql/`. Os scripts consolidados desta 
 | 10 | `sql/12_restricao_aluno.sql` | Restrições adicionais para o perfil aluno |
 | 11 | `sql/13_fix_definitivo.sql` | Correção definitiva de visibilidade/RLS |
 | 12 | `sql/15_correcao_categoria_restrita.sql` | Correção final da categoria restrita |
-| 13 | `script_insercao_dados.sql` (esta pasta) | Insere dados iniciais: setores e categorias |
+| 13 | `sql/16_fix_cancelar_ocorrencia.sql` | Correção do fluxo de cancelamento de ocorrências |
+| 14 | `script_insercao_dados.sql` (esta pasta) | Insere dados iniciais: setores e categorias |
 | — | `sql/14_diagnostico_rls.sql` | (Opcional) Queries de diagnóstico para conferir o estado das políticas |
 
 > **Observação:** o `sql/05_visibilidade_global.sql` foi substituído pelo `13_fix_definitivo.sql`

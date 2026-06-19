@@ -1,0 +1,138 @@
+================================================================================
+      MODELO DE DADOS — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+SGBD: PostgreSQL (Supabase)
+
+--------------------------------------------------------------------------------
+DIAGRAMA DE RELACIONAMENTOS (ER simplificado)
+--------------------------------------------------------------------------------
+
+   auth.users (Supabase Auth)
+       │ 1:1
+       ▼
+   ┌──────────┐        ┌──────────────┐        ┌──────────────┐
+   │  perfis  │◄──────┤ perfil_roles  ├──────►│    roles     │
+   └────┬─────┘  N   1 └──────┬───────┘  N   1 └──────┬───────┘
+        │                     │ (setor_id opc.)       │ 1
+        │ 1                   ▼                        ▼ N
+        │              ┌──────────┐            ┌──────────────────┐
+        │              │ setores  │            │ role_permissoes  │
+        │              └────┬─────┘            └────────┬─────────┘
+        │ N             1 │ │ 1                         │ N
+        ▼                 ▼ │                           ▼ 1
+   ┌──────────────┐  ┌──────────────┐           ┌──────────────┐
+   │  ocorrencias │─►│  categorias  │           │  permissoes  │
+   └──────┬───────┘N1└──────────────┘           └──────────────┘
+          │
+          │ 1
+   ┌──────┴───────────────┐
+   ▼ N                    ▼ N
+┌────────────────────┐ ┌──────────────────┐
+│ fotos_ocorrencias  │ │ historico_status │
+└────────────────────┘ └──────────────────┘
+
+--------------------------------------------------------------------------------
+LEGENDA DE CARDINALIDADE
+--------------------------------------------------------------------------------
+  1:1  → um para um         1:N  → um para muitos
+  N:1  → muitos para um     N:N  → muitos para muitos (via tabela de junção)
+
+--------------------------------------------------------------------------------
+ENTIDADES E ATRIBUTOS
+--------------------------------------------------------------------------------
+
+perfis (1:1 com auth.users)
+  id              uuid  PK, FK → auth.users(id)
+  nome_completo   varchar(150)
+  tipo_usuario    varchar(50)        (campo legado, migrado para o RBAC)
+  role_principal  varchar(50)        (cache da role de maior autoridade)
+  criado_em       timestamptz
+
+setores
+  id              uuid  PK
+  nome            varchar(100)
+  descricao       text
+  ativo           boolean
+  criado_em       timestamptz
+
+categorias
+  id              uuid  PK
+  nome            varchar(100)
+  icone           varchar(50)        (nome do ícone Ionicons)
+  setor_id        uuid  FK → setores(id)
+  restrito        boolean            (true = visível só p/ roles privilegiadas)
+  ativo           boolean
+  criado_em       timestamptz
+
+ocorrencias
+  id              uuid  PK
+  usuario_id      uuid  FK → perfis(id)
+  titulo          varchar(150)
+  descricao       text
+  categoria_id    uuid  FK → categorias(id)
+  setor_id        uuid  FK → setores(id)
+  local           varchar(150)
+  urgencia        varchar(20)        (baixa | media | alta)
+  status          varchar(20)        (aberta | em_analise | em_andamento |
+                                       resolvida | cancelada | encerrada)
+  criado_em       timestamptz
+
+fotos_ocorrencias
+  id              uuid  PK
+  ocorrencia_id   uuid  FK → ocorrencias(id)
+  url             text               (URL pública do Storage)
+  storage_path    text               (caminho no bucket fotos-ocorrencias)
+  criado_em       timestamptz
+
+historico_status
+  id              uuid  PK
+  ocorrencia_id   uuid  FK → ocorrencias(id)
+  status_anterior varchar(20)
+  status_novo     varchar(20)
+  observacao      text
+  alterado_por    uuid  FK → perfis(id)
+  criado_em       timestamptz
+
+--------------------------------------------------------------------------------
+RBAC (Controle de Acesso Baseado em Papéis)
+--------------------------------------------------------------------------------
+
+roles
+  id, nome (único), label, nivel (1..10), descricao, ativo, criado_em
+  Hierarquia: 1 = maior autoridade.
+    1 super_admin | 2 admin_institucional | 3 gestor_setor
+    4 tecnico     | 5 professor           | 6 aluno (padrão)
+
+permissoes
+  id, codigo (único, padrão "modulo.acao"), descricao, modulo, criado_em
+  Módulos: ocorrencias, usuarios, setores, relatorios, sistema.
+
+role_permissoes (N:N entre roles e permissoes)
+  role_id  FK → roles(id)
+  permissao_id  FK → permissoes(id)
+  PK (role_id, permissao_id)
+
+perfil_roles (N:N entre perfis e roles, com escopo de setor)
+  id, perfil_id FK → perfis(id), role_id FK → roles(id),
+  setor_id FK → setores(id) (opcional), concedido_por FK → perfis(id), criado_em
+
+--------------------------------------------------------------------------------
+CICLO DE VIDA DA OCORRÊNCIA (campo status)
+--------------------------------------------------------------------------------
+
+  aberta ──► em_analise ──► em_andamento ──► resolvida ──► encerrada
+     │                                            ▲
+     └──────────────► cancelada ──────────────────┘
+
+Cada transição é registrada na tabela historico_status (auditoria).
+
+--------------------------------------------------------------------------------
+ARMAZENAMENTO (Supabase Storage)
+--------------------------------------------------------------------------------
+  Bucket: fotos-ocorrencias (público)
+  As fotos são enviadas em Base64, salvas no bucket e a URL pública é
+  registrada em fotos_ocorrencias.url.
+
+================================================================================

@@ -1,0 +1,47 @@
+================================================================================
+      FICHA DE FREQUÊNCIA — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+
+--------------------------------------------------------------------------------
+O QUE COLOCAR NESTA PASTA (OBRIGATÓRIO)
+--------------------------------------------------------------------------------
+
+A ficha de frequência INDIVIDUAL de CADA integrante do grupo, devidamente
+PREENCHIDA e ASSINADA.
+
+Integrantes do grupo:
+  1. Kauê Kanagusko Ruiz        — Ciência da Computação
+  2. Gerson de Oliveira Lopes Jr. — Ciência da Computação
+
+Sugestão de nomes dos arquivos:
+  ficha_frequencia_kaue_kanagusko_ruiz.pdf
+  ficha_frequencia_gerson_oliveira_lopes_jr.pdf
+
+--------------------------------------------------------------------------------
+ATENÇÃO (conforme o guia de entrega)
+--------------------------------------------------------------------------------
+
+A AUSÊNCIA da ficha, o preenchimento incompleto/inadequado, ou a FALTA DE
+ASSINATURA pode INVIABILIZAR a emissão do certificado.
+
+As horas de AACC são lançadas com base na ficha de frequência de cada estudante.
+
+--------------------------------------------------------------------------------
+CASO O GRUPO VÁ CONTINUAR O DESENVOLVIMENTO DEPOIS
+--------------------------------------------------------------------------------
+
+Se o grupo for continuar em julho/agosto e tiver pedido para NÃO emitir o
+certificado agora, inclua nesta pasta um arquivo .txt com a observação:
+
+  "Não lançar as horas agora, pois vamos continuar o desenvolvimento em agosto."
+
+--------------------------------------------------------------------------------
+PRAZO
+--------------------------------------------------------------------------------
+
+Entrega até sexta-feira, 19 de junho de 2026, na pasta do Drive indicada pelo
+professor responsável.
+
+================================================================================

@@ -1,0 +1,86 @@
+================================================================================
+      OBSERVAÇÕES IMPORTANTES DO CÓDIGO-FONTE — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Semestre de 2026
+Aplicativo Mobile (React Native + Expo + Supabase)
+
+--------------------------------------------------------------------------------
+1. VARIÁVEIS DE AMBIENTE (.env) — OBRIGATÓRIO
+--------------------------------------------------------------------------------
+
+O projeto NÃO funciona sem o arquivo `.env` na raiz. Esse arquivo NÃO é versionado
+(está no .gitignore) por conter credenciais. Crie-o a partir do modelo `.env.example`:
+
+  EXPO_PUBLIC_SUPABASE_URL=https://SEU-PROJETO.supabase.co
+  EXPO_PUBLIC_SUPABASE_ANON_KEY=sua-chave-anon-publica
+
+As credenciais de teste do Supabase para avaliação estão descritas em
+05_BIBLIOTECAS_DEPENDENCIAS_E_CONFIGURACOES/configuracoes_do_ambiente.txt.
+
+--------------------------------------------------------------------------------
+2. BANCO DE DADOS — DEVE ESTAR CONFIGURADO ANTES DE EXECUTAR
+--------------------------------------------------------------------------------
+
+As tabelas, funções, triggers e políticas RLS do Supabase precisam estar criadas
+antes da primeira execução. Os scripts e a ordem correta de execução estão em:
+
+  06_BANCO_DE_DADOS/instrucoes_banco_de_dados.md
+  06_BANCO_DE_DADOS/script_criacao_banco.sql
+  06_BANCO_DE_DADOS/script_insercao_dados.sql
+
+Os scripts originais, separados por etapa, também acompanham o código em `sql/`.
+
+--------------------------------------------------------------------------------
+3. PRIMEIRO SUPER ADMIN
+--------------------------------------------------------------------------------
+
+Todo novo usuário é criado com a role "aluno" por padrão (trigger no banco).
+O primeiro "super_admin" NÃO pode ser promovido pelo app (ninguém tem a permissão
+inicialmente) — ele deve ser atribuído manualmente no SQL Editor do Supabase.
+O procedimento está documentado em 06_BANCO_DE_DADOS/instrucoes_banco_de_dados.md
+e no arquivo sql/06_sistema_roles.sql (PARTE 14).
+
+--------------------------------------------------------------------------------
+4. DEPENDÊNCIAS
+--------------------------------------------------------------------------------
+
+- Gerenciador de pacotes: npm
+- Não apagar o arquivo package-lock.json (garante as versões exatas).
+- Rodar `npm install` na raiz antes da primeira execução.
+- Versões e comandos detalhados em 05_BIBLIOTECAS_DEPENDENCIAS_E_CONFIGURACOES/.
+
+--------------------------------------------------------------------------------
+5. EXECUÇÃO E COMPATIBILIDADE
+--------------------------------------------------------------------------------
+
+- Testado via Expo Go (Android e iOS) e em emulador/simulador.
+- Para testar em dispositivo físico fora da mesma rede Wi-Fi, use:
+    npm start -- --tunnel   (requer o pacote @expo/ngrok, já listado em devDependencies)
+- O app requer conexão com a Internet (back-end Supabase).
+- Permissões usadas: câmera e galeria (anexo de fotos nas ocorrências).
+
+--------------------------------------------------------------------------------
+6. IDENTIFICADOR DE PACOTE (BUILD DE PRODUÇÃO)
+--------------------------------------------------------------------------------
+
+Para gerar builds de produção (APK/AAB), configure no app.json o identificador:
+
+  android.package      : br.edu.fabricadesoftware.ocorrencias
+  ios.bundleIdentifier : br.edu.fabricadesoftware.ocorrencias
+
+Detalhes em 03_ORIENTACOES_DE_INSTALACAO_E_EXECUCAO/MOBILE/nome_do_pacote.txt
+e o passo a passo de geração em 07_ENTREGAVEIS_DO_PROJETO/.
+
+--------------------------------------------------------------------------------
+7. PONTOS DE ATENÇÃO CONHECIDOS
+--------------------------------------------------------------------------------
+
+- A categoria "Problema com aluno" é restrita: alunos, técnicos e gestores de setor
+  não conseguem visualizá-la (bloqueio por RLS no banco + filtro no front-end).
+- A área de Suporte (SuporteScreen) possui um stub de API pronto para integração
+  futura com uma tabela `suporte` no Supabase.
+- As verificações de permissão no cliente são defesa secundária; a segurança real
+  está nas políticas RLS do PostgreSQL.
+
+================================================================================

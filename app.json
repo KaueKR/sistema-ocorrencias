@@ -13,9 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "br.edu.fabricadesoftware.ocorrencias"
     },
     "android": {
+      "package": "br.edu.fabricadesoftware.ocorrencias",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -27,6 +29,12 @@
     },
     "plugins": [
       "@react-native-community/datetimepicker"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "faeebef7-15b2-4bd6-927a-d6d5133a5a98"
+      }
+    },
+    "owner": "gersonjnr"
   }
 }

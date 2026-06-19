@@ -1,0 +1,62 @@
+================================================================================
+      BACKUP DO BANCO DE DADOS — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+SGBD: PostgreSQL (Supabase)
+
+--------------------------------------------------------------------------------
+O QUE COLOCAR NESTA PASTA
+--------------------------------------------------------------------------------
+
+Um dump (exportação) do banco de dados, para permitir a restauração completa
+em outro ambiente. Recomendado:
+
+  backup_sistema_ocorrencias.sql      (estrutura + dados)
+
+Caso o grupo não gere o dump, a estrutura pode ser recriada do zero executando,
+na ordem, os scripts descritos em ../instrucoes_banco_de_dados.md.
+
+--------------------------------------------------------------------------------
+COMO GERAR O BACKUP — OPÇÃO 1: pelo painel do Supabase
+--------------------------------------------------------------------------------
+
+1. Acesse o projeto no Supabase.
+2. Menu: Database → Backups (ou Settings → Database).
+3. Faça o download do backup mais recente OU use a opção de exportação.
+4. Salve o arquivo nesta pasta.
+
+--------------------------------------------------------------------------------
+COMO GERAR O BACKUP — OPÇÃO 2: por linha de comando (pg_dump)
+--------------------------------------------------------------------------------
+
+Requer o PostgreSQL client (pg_dump) instalado e a "Connection string" do banco
+(painel do Supabase → Project Settings → Database → Connection string → URI).
+
+  # Estrutura + dados (recomendado)
+  pg_dump "postgresql://USUARIO:SENHA@HOST:5432/postgres" \
+    --no-owner --no-privileges \
+    -f backup_sistema_ocorrencias.sql
+
+  # Somente a estrutura (sem dados)
+  pg_dump "postgresql://USUARIO:SENHA@HOST:5432/postgres" \
+    --schema-only --no-owner --no-privileges \
+    -f estrutura_sistema_ocorrencias.sql
+
+--------------------------------------------------------------------------------
+COMO RESTAURAR O BACKUP
+--------------------------------------------------------------------------------
+
+  psql "postgresql://USUARIO:SENHA@HOST:5432/postgres" \
+    -f backup_sistema_ocorrencias.sql
+
+Ou, no SQL Editor do Supabase, cole e execute o conteúdo do arquivo .sql.
+
+--------------------------------------------------------------------------------
+SEGURANÇA
+--------------------------------------------------------------------------------
+
+NÃO inclua senhas reais, a chave service_role ou dados pessoais de usuários no
+dump entregue. Para avaliação, prefira dados de teste fictícios.
+
+================================================================================

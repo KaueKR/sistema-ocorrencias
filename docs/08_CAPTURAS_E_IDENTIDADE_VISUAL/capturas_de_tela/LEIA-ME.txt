@@ -1,0 +1,30 @@
+================================================================================
+      CAPTURAS DE TELA — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+Aplicativo Mobile (React Native + Expo) — capturas tiradas em dispositivo iOS.
+
+--------------------------------------------------------------------------------
+ÍNDICE DAS CAPTURAS (na ordem do fluxo de uso)
+--------------------------------------------------------------------------------
+
+  01_login.jpeg              Tela de Login (e-mail e senha)
+  02_cadastro.jpeg           Criar conta / Cadastro de novo usuário
+  03_dashboard.jpeg          Dashboard: contadores (Em Aberto / Resolvidas) e lista
+  04_nova_ocorrencia.jpeg    Formulário de Nova Ocorrência (categoria, urgência, foto)
+  05_mural_ocorrencias.jpeg  Mural de Ocorrências (abas Todas / Minhas, status colorido)
+  06_perfil.jpeg             Perfil do usuário (menu) — exibe o badge "Super Admin"
+  07_gestao_usuarios.jpeg    Painel Administrativo — Gestão de Usuários (filtros por role)
+  08_creditos.jpeg           Tela de Créditos (projeto, finalidade e corpo docente)
+
+Total: 8 capturas (conforme o guia, que pede de 6 a 8 prints).
+
+--------------------------------------------------------------------------------
+OBSERVAÇÃO
+--------------------------------------------------------------------------------
+
+A tela de Créditos (08_creditos.jpeg) atende ao requisito obrigatório do guia:
+nome do projeto, finalidade e corpo docente (coordenador e colaboradores).
+
+================================================================================

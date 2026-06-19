@@ -1,0 +1,52 @@
+================================================================================
+      LINK DE ACESSO — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+Tipo de projeto: Aplicativo Mobile (Android / iOS) — React Native + Expo
+
+--------------------------------------------------------------------------------
+REPOSITÓRIO DO CÓDIGO-FONTE
+--------------------------------------------------------------------------------
+  https://github.com/KaueKR/sistema-ocorrencias
+
+--------------------------------------------------------------------------------
+COMO ACESSAR / TESTAR O APLICATIVO
+--------------------------------------------------------------------------------
+
+Por ser um aplicativo mobile, o acesso se dá por uma das formas abaixo:
+
+1. INSTALAÇÃO DO APK (recomendado para avaliação)
+   - Arquivo APK release: ver pasta versao_final/
+   - Instale o .apk em um dispositivo Android real e abra o aplicativo.
+   - Passo a passo de geração do APK: ver instrucoes_geracao_apk_aab.txt
+
+2. EXECUÇÃO VIA EXPO GO (ambiente de desenvolvimento)
+   - Instale as dependências (npm install) e configure o .env.
+   - Rode "npm start" e leia o QR Code com o app Expo Go.
+   - Detalhes em 03_ORIENTACOES_DE_INSTALACAO_E_EXECUCAO/.
+
+--------------------------------------------------------------------------------
+LINK DO BUILD / DISTRIBUIÇÃO (preencher quando publicado)
+--------------------------------------------------------------------------------
+  Build APK (EAS) : https://expo.dev/accounts/gersonjnr/projects/sistema-ocorrencias/builds/849ab3ba-1b0c-443e-8009-ce1e0ea25fd7
+  Build AAB (EAS) : https://expo.dev/accounts/gersonjnr/projects/sistema-ocorrencias/builds/25baecdd-e7bf-4f15-aa24-b8703c2eb0a4
+  Arquivos        : ver pasta versao_final/ (APK e AAB release, v1.0.0)
+  Data do build   : 18/06/2026
+  Observações     : builds gerados em modo RELEASE e assinados via EAS Build (Expo)
+
+--------------------------------------------------------------------------------
+CREDENCIAIS DE TESTE (preencher para a avaliação)
+--------------------------------------------------------------------------------
+  Não usar senhas pessoais dos integrantes. Contas de teste abaixo.
+
+  Usuário administrador (Super Admin) — acesso completo, inclui Painel Adm.:
+    E-mail : test@test.com
+    Senha  : Zezinho123456!
+
+  Usuário comum (aluno):
+    Não há uma conta de aluno pré-criada. Para testar o perfil de aluno,
+    o avaliador pode criar uma conta nova pela tela "Cadastre-se": todo novo
+    usuário entra automaticamente com o perfil "aluno" (padrão do sistema).
+
+================================================================================

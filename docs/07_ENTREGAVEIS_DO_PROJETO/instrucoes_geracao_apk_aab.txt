@@ -1,0 +1,86 @@
+================================================================================
+   INSTRUÇÕES DE GERAÇÃO DO APK E AAB (RELEASE) — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+Stack: React Native + Expo (SDK 54). Build via EAS Build.
+
+IMPORTANTE: este projeto usa EXPO (não Flutter). Portanto, os comandos de build
+são do EAS (Expo Application Services), e NÃO "flutter build". O APK e o AAB
+devem ser gerados em modo RELEASE e assinados.
+
+--------------------------------------------------------------------------------
+1. PRÉ-REQUISITOS
+--------------------------------------------------------------------------------
+  - Node.js LTS instalado e dependências do projeto (npm install).
+  - Conta gratuita no Expo: https://expo.dev
+  - Identificador de pacote definido no app.json:
+        android.package      : br.edu.fabricadesoftware.ocorrencias
+        ios.bundleIdentifier : br.edu.fabricadesoftware.ocorrencias
+    (ver 03_ORIENTACOES_DE_INSTALACAO_E_EXECUCAO/MOBILE/nome_do_pacote.txt)
+  - Arquivo .env configurado (credenciais do Supabase).
+
+--------------------------------------------------------------------------------
+2. INSTALAR O EAS CLI E AUTENTICAR
+--------------------------------------------------------------------------------
+  npm install -g eas-cli
+  eas login
+  eas build:configure        # cria/atualiza o eas.json
+
+--------------------------------------------------------------------------------
+3. GERAR O APK (RELEASE) — para instalação manual e teste
+--------------------------------------------------------------------------------
+  eas build -p android --profile preview
+
+  - O perfil "preview" gera um .apk instalável diretamente no aparelho.
+  - Ao final, o EAS fornece um LINK para baixar o .apk.
+  - Baixe o arquivo e salve em versao_final/ com nome claro, por exemplo:
+        sistema-ocorrencias-v1.0.0-release.apk
+
+  Caso o eas.json não tenha o perfil "preview" com buildType apk, use:
+        {
+          "build": {
+            "preview": {
+              "android": { "buildType": "apk" }
+            }
+          }
+        }
+
+--------------------------------------------------------------------------------
+4. GERAR O AAB (RELEASE) — para a Google Play Store
+--------------------------------------------------------------------------------
+  eas build -p android --profile production
+
+  - Gera um .aab (Android App Bundle) assinado, formato exigido pela Play Store.
+  - O EAS gerencia a chave de assinatura automaticamente (managed credentials).
+  - Baixe o .aab e salve em versao_final/, por exemplo:
+        sistema-ocorrencias-v1.0.0-release.aab
+
+--------------------------------------------------------------------------------
+5. (iOS, opcional) GERAR BUILD PARA iPhone
+--------------------------------------------------------------------------------
+  eas build -p ios --profile production
+  (requer conta Apple Developer; opcional para esta entrega)
+
+--------------------------------------------------------------------------------
+6. CONFERÊNCIA ANTES DA ENTREGA (checklist do guia)
+--------------------------------------------------------------------------------
+  [ ] O package name NÃO está como "com.example".
+  [ ] O APK foi gerado em modo RELEASE (não debug).
+  [ ] O APK foi instalado e testado em um dispositivo Android real.
+  [ ] O ícone e o nome do app aparecem corretos no aparelho.
+  [ ] A tela de Créditos está acessível e completa.
+  [ ] O app abre sem tela em branco e não fecha sozinho.
+  [ ] Os arquivos .apk e .aab estão salvos em versao_final/.
+
+--------------------------------------------------------------------------------
+OBSERVAÇÃO SOBRE BUILD LOCAL (alternativa sem nuvem)
+--------------------------------------------------------------------------------
+  Também é possível gerar localmente com:
+        npx expo prebuild
+        cd android && ./gradlew assembleRelease   # gera APK release
+        cd android && ./gradlew bundleRelease      # gera AAB release
+  Isso exige Android Studio/SDK configurado e a geração de uma keystore própria.
+  O caminho mais simples e recomendado para a entrega é o EAS Build (itens 3 e 4).
+
+================================================================================

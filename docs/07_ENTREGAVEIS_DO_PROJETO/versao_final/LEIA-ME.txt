@@ -1,0 +1,42 @@
+================================================================================
+      VERSÃO FINAL — ENTREGÁVEIS DO SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+Tipo: Aplicativo Mobile (React Native + Expo)
+
+--------------------------------------------------------------------------------
+ARQUIVOS NESTA PASTA
+--------------------------------------------------------------------------------
+
+  [x] sistema-ocorrencias-v1.0.0-release.apk   (APK assinado, modo RELEASE — 66 MB)
+  [x] sistema-ocorrencias-v1.0.0-release.aab   (AAB assinado, modo RELEASE — 46 MB)
+
+Ambos gerados via EAS Build (Expo) em modo RELEASE, assinados com a keystore do
+projeto (gerenciada pela Expo). Versão do app: 1.0.0 (versionCode 1).
+Identificador: br.edu.fabricadesoftware.ocorrencias
+
+  - O .apk serve para instalação manual em um aparelho Android (teste/avaliação).
+  - O .aab é o formato para envio à Google Play Store.
+
+--------------------------------------------------------------------------------
+COMO INSTALAR O APK (para o avaliador)
+--------------------------------------------------------------------------------
+
+  1. Transfira o arquivo .apk para um celular Android.
+  2. Abra o arquivo no aparelho.
+  3. Se solicitado, autorize "instalar de fontes desconhecidas".
+  4. Abra o app "Sistema de Ocorrências".
+  5. Faça login com as credenciais de teste (ver ../link_de_acesso.txt).
+
+Requer conexão com a Internet (back-end Supabase).
+
+--------------------------------------------------------------------------------
+COMO REGERAR OS BUILDS (se necessário)
+--------------------------------------------------------------------------------
+
+  Passo a passo completo em ../instrucoes_geracao_apk_aab.txt
+    eas build -p android --profile preview      # APK
+    eas build -p android --profile production    # AAB
+
+================================================================================

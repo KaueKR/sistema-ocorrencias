@@ -1,0 +1,47 @@
+================================================================================
+      PASTA "projeto/" — CÓDIGO-FONTE COMPLETO
+================================================================================
+
+Esta pasta deve conter o CÓDIGO-FONTE COMPLETO do aplicativo Sistema de Ocorrências.
+
+--------------------------------------------------------------------------------
+COMO PREENCHER ESTA PASTA ANTES DA ENTREGA
+--------------------------------------------------------------------------------
+
+Copie para cá TODOS os arquivos e pastas da raiz do projeto, EXCETO as pastas
+pesadas/geradas automaticamente. Conteúdo esperado:
+
+  App.js
+  index.js
+  app.json
+  package.json
+  package-lock.json
+  .env.example          (NÃO copiar o .env real)
+  .gitignore
+  .gitattributes
+  README.md
+  assets/               (ícones, splash, imagens)
+  sql/                  (scripts do banco de dados)
+  src/                  (código-fonte da aplicação)
+
+NÃO incluir (são geradas por npm/Expo e ocupam muito espaço):
+
+  node_modules/         (reinstalada com "npm install")
+  .expo/
+  android/  ios/        (geradas pelo build, se houver)
+
+--------------------------------------------------------------------------------
+OBSERVAÇÃO SOBRE COMPACTAÇÃO
+--------------------------------------------------------------------------------
+
+Conforme o guia de entrega, 04_CODIGO_FONTE é a ÚNICA pasta que pode ser entregue
+compactada (.zip), caso necessário. Todas as demais pastas devem ser enviadas sem
+compactação.
+
+Comando rápido para gerar o pacote a partir da raiz do projeto (macOS/Linux),
+ignorando as pastas geradas:
+
+  zip -r codigo-fonte-sistema-ocorrencias.zip . \
+    -x "node_modules/*" ".expo/*" ".git/*" "android/*" "ios/*" "*.env"
+
+================================================================================

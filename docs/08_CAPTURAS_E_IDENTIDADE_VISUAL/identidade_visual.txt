@@ -1,0 +1,62 @@
+================================================================================
+      IDENTIDADE VISUAL — SISTEMA DE OCORRÊNCIAS
+================================================================================
+
+Projeto de Extensão Fábrica de Software — 1º Sem. 2026
+Aplicativo Mobile (React Native + Expo)
+
+--------------------------------------------------------------------------------
+1. PALETA DE CORES
+--------------------------------------------------------------------------------
+
+  Vermelho institucional (primária) ... #EF1D26
+  Escuro (headers / texto forte) ...... #232323
+  Superfície clara (fundo) ............ #F8F8F8
+  Branco .............................. #FFFFFF
+
+  Cores de status das ocorrências:
+    Aberta ......... #EF1D26  (vermelho)
+    Em Análise ..... #C78A00  (âmbar)
+    Em Andamento ... #2563EB  (azul)
+    Resolvida ...... #16A34A  (verde)
+    Cancelada ...... #666666  (cinza)
+    Encerrada ...... #666666  (cinza)
+
+--------------------------------------------------------------------------------
+2. TIPOGRAFIA E COMPONENTES
+--------------------------------------------------------------------------------
+
+  - Tipografia: fontes do sistema (San Francisco no iOS, Roboto no Android).
+  - Ícones: biblioteca Ionicons (@expo/vector-icons).
+  - Cards: cantos arredondados (raio 16px), containers de ícone quadrados arredondados.
+  - Header: barra escura (#232323) com botão de retorno circular.
+  - Estilização: StyleSheet.create() puro (sem biblioteca de UI de terceiros).
+
+--------------------------------------------------------------------------------
+3. ÍCONE E SPLASH DO APLICATIVO
+--------------------------------------------------------------------------------
+
+  Arquivos em assets/ (no código-fonte):
+    icon.png            — ícone principal do app
+    adaptive-icon.png   — ícone adaptativo (Android)
+    splash-icon.png     — imagem da splash screen
+    favicon.png         — favicon (versão web)
+
+  Configuração em app.json:
+    icon              : ./assets/icon.png
+    splash.image      : ./assets/splash-icon.png
+    splash.background : #ffffff
+
+--------------------------------------------------------------------------------
+4. O QUE COLOCAR NA PASTA "outros/"
+--------------------------------------------------------------------------------
+
+  - Cópia do ícone do app (icon.png).
+  - Imagem de capa / arte de divulgação (se houver).
+  - Logotipo do UNISAGRADO e da Coordenadoria de Extensão usados na tela de Créditos:
+      UNISAGRADO:  https://unisagrado.edu.br/institucional/nossa-marca
+      Coord. Extensão:
+      https://unisagrado.edu.br/uploads/2008/logotipos/monoliticas_unisagrado/coordenadoria-de-extensao.jpg
+  - Qualquer material de identidade visual adicional do grupo.
+
+================================================================================

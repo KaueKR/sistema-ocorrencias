@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "sistema-ocorrencias",
+    "slug": "sistema-ocorrencias",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "br.edu.fabricadesoftware.ocorrencias"
+    },
+    "android": {
+      "package": "br.edu.fabricadesoftware.ocorrencias",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "@react-native-community/datetimepicker"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "faeebef7-15b2-4bd6-927a-d6d5133a5a98"
+      }
+    },
+    "owner": "gersonjnr"
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet,
+  View, Text, TextInput, TouchableOpacity, StyleSheet, Image,
   ActivityIndicator, KeyboardAvoidingView, Platform, StatusBar
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -116,6 +116,14 @@ export default function LoginScreen({ navigation }) {
             </Text>
           </TouchableOpacity>
         </View>
+
+        <View style={[styles.brandFooter, { paddingBottom: insets.bottom + 8 }]}>
+          <Image
+            source={require('../../assets/logo-unisagrado.png')}
+            style={styles.brandLogo}
+            resizeMode="contain"
+          />
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -155,4 +163,6 @@ const styles = StyleSheet.create({
   registerLink: { alignItems: 'center', marginTop: 4 },
   registerLinkText: { color: '#666666', fontSize: 14 },
   registerLinkHighlight: { color: '#EF1D26', fontWeight: '700' },
+  brandFooter: { alignItems: 'center', marginTop: 36 },
+  brandLogo: { width: 160, height: 50 },
 });

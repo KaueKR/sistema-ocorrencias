@@ -2,6 +2,7 @@ import React from 'react';
 import {
   View,
   Text,
+  Image,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
@@ -182,6 +183,29 @@ export default function CreditosScreen({ navigation }) {
           ))}
         </SectionCard>
 
+        {/* Instituição — Desenvolvimento e Apoio */}
+        <SectionCard>
+          <SectionTitle icon="business-outline" label="Instituição" />
+          <Divider />
+          <View style={styles.logoBlock}>
+            <Text style={styles.logoLabel}>Desenvolvimento:</Text>
+            <Image
+              source={require('../../assets/logo-unisagrado.png')}
+              style={styles.logoUnisagrado}
+              resizeMode="contain"
+            />
+          </View>
+          <Divider />
+          <View style={styles.logoBlock}>
+            <Text style={styles.logoLabel}>Apoio:</Text>
+            <Image
+              source={require('../../assets/logo-coordenadoria-extensao.jpg')}
+              style={styles.logoCoordenadoria}
+              resizeMode="contain"
+            />
+          </View>
+        </SectionCard>
+
         <View style={styles.footer}>
           <Ionicons name="heart" size={14} color="#EF1D26" />
           <Text style={styles.footerText}>  Desenvolvido com dedicação — {new Date().getFullYear()}</Text>
@@ -328,6 +352,29 @@ const styles = StyleSheet.create({
   personDetail: {
     fontSize: 12,
     color: '#666666',
+  },
+
+  logoBlock: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    gap: 12,
+  },
+  logoLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#999999',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  logoUnisagrado: {
+    width: 200,
+    height: 72,
+    alignSelf: 'center',
+  },
+  logoCoordenadoria: {
+    width: 250,
+    height: 64,
+    alignSelf: 'center',
   },
 
   footer: {

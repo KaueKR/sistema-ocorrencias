@@ -6,10 +6,16 @@ Projeto de Extensão Fábrica de Software — 1º Sem. 2026
 Aplicativo Mobile (React Native + Expo)
 
 --------------------------------------------------------------------------------
+LINK DO VÍDEO
+--------------------------------------------------------------------------------
 
   Plataforma : Google Drive
   Link       : https://drive.google.com/file/d/1cbQJBHQS9gNVuwKvCn2jcjK0EUEGZ4KS/view?usp=drive_link
   Duração    : 11 min 30 s
-  Data       : 18/06/20266
+  Data       : 19/06/2026
+
+  Atenção: confira se a permissão de acesso do link está como "qualquer pessoa
+  com o link pode ver", para que os professores responsáveis assistam ao vídeo
+  sem precisar solicitar autorização.
 
 ================================================================================

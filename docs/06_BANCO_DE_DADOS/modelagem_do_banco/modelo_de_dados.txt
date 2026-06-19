@@ -5,6 +5,8 @@
 Projeto de Extensão Fábrica de Software — 1º Sem. 2026
 SGBD: PostgreSQL (Supabase)
 
+Diagrama visual completo: schema_banco_de_dados.png (nesta mesma pasta).
+
 --------------------------------------------------------------------------------
 DIAGRAMA DE RELACIONAMENTOS (ER simplificado)
 --------------------------------------------------------------------------------
@@ -16,22 +18,26 @@ DIAGRAMA DE RELACIONAMENTOS (ER simplificado)
    │  perfis  │◄──────┤ perfil_roles  ├──────►│    roles     │
    └────┬─────┘  N   1 └──────┬───────┘  N   1 └──────┬───────┘
         │                     │ (setor_id opc.)       │ 1
-        │ 1                   ▼                        ▼ N
+        │                     ▼                        ▼ N
         │              ┌──────────┐            ┌──────────────────┐
         │              │ setores  │            │ role_permissoes  │
         │              └────┬─────┘            └────────┬─────────┘
-        │ N             1 │ │ 1                         │ N
-        ▼                 ▼ │                           ▼ 1
-   ┌──────────────┐  ┌──────────────┐           ┌──────────────┐
-   │  ocorrencias │─►│  categorias  │           │  permissoes  │
-   └──────┬───────┘N1└──────────────┘           └──────────────┘
-          │
+        │ 1              1 │ │ 1                         │ N
+        │ ┌────────────────┘ └──────┐                   ▼ 1
+        ▼ ▼                         ▼            ┌──────────────┐
+   ┌──────────────┐          ┌──────────────┐   │  permissoes  │
+   │  ocorrencias │─────────►│  categorias  │   └──────────────┘
+   └──────┬───────┘ N      1 └──────────────┘
           │ 1
    ┌──────┴───────────────┐
    ▼ N                    ▼ N
-┌────────────────────┐ ┌──────────────────┐
-│ fotos_ocorrencias  │ │ historico_status │
-└────────────────────┘ └──────────────────┘
+┌────────────────────┐ ┌──────────────────┐     ┌──────────┐
+│ fotos_ocorrencias  │ │ historico_status │     │ suporte  │ N─1 perfis
+└────────────────────┘ └──────────────────┘     └──────────┘
+
+  (perfis também é referenciada por: ocorrencias.usuario_id,
+   ocorrencias.responsavel_id, historico_status.alterado_por,
+   perfil_roles.concedido_por e suporte.perfil_id)
 
 --------------------------------------------------------------------------------
 LEGENDA DE CARDINALIDADE
@@ -40,59 +46,77 @@ LEGENDA DE CARDINALIDADE
   N:1  → muitos para um     N:N  → muitos para muitos (via tabela de junção)
 
 --------------------------------------------------------------------------------
-ENTIDADES E ATRIBUTOS
+ENTIDADES E ATRIBUTOS  (conforme schema_banco_de_dados.png)
 --------------------------------------------------------------------------------
 
 perfis (1:1 com auth.users)
-  id              uuid  PK, FK → auth.users(id)
-  nome_completo   varchar(150)
-  tipo_usuario    varchar(50)        (campo legado, migrado para o RBAC)
-  role_principal  varchar(50)        (cache da role de maior autoridade)
+  id              uuid         PK, FK → auth.users(id)
+  nome_completo   text
+  email           text
+  telefone        text
+  tipo_usuario    text         (campo legado, migrado para o RBAC)
+  avatar_url      text
+  ativo           boolean
   criado_em       timestamptz
+  atualizado_em   timestamptz
+  role_principal  varchar      (cache da role de maior autoridade)
 
 setores
-  id              uuid  PK
-  nome            varchar(100)
-  descricao       text
-  ativo           boolean
-  criado_em       timestamptz
+  id                uuid         PK
+  nome              text
+  descricao         text
+  email_responsavel text
+  ativo             boolean
+  criado_em         timestamptz
 
 categorias
-  id              uuid  PK
-  nome            varchar(100)
-  icone           varchar(50)        (nome do ícone Ionicons)
-  setor_id        uuid  FK → setores(id)
-  restrito        boolean            (true = visível só p/ roles privilegiadas)
+  id              uuid         PK
+  setor_id        uuid         FK → setores(id)
+  nome            text
+  descricao       text
+  icone           text         (nome do ícone Ionicons)
   ativo           boolean
   criado_em       timestamptz
+  restrito        boolean      (true = visível só p/ roles privilegiadas)
 
 ocorrencias
-  id              uuid  PK
-  usuario_id      uuid  FK → perfis(id)
-  titulo          varchar(150)
-  descricao       text
-  categoria_id    uuid  FK → categorias(id)
-  setor_id        uuid  FK → setores(id)
-  local           varchar(150)
-  urgencia        varchar(20)        (baixa | media | alta)
-  status          varchar(20)        (aberta | em_analise | em_andamento |
-                                       resolvida | cancelada | encerrada)
-  criado_em       timestamptz
+  id                  uuid         PK
+  usuario_id          uuid         FK → perfis(id)   (autor)
+  categoria_id        uuid         FK → categorias(id)
+  setor_id            uuid         FK → setores(id)
+  titulo              text
+  descricao           text
+  local               text
+  urgencia            text         (baixa | media | alta)
+  status              text         (aberta | em_analise | em_andamento |
+                                     resolvida | cancelada | encerrada)
+  responsavel_id      uuid         FK → perfis(id)   (responsável designado)
+  observacao_interna  text
+  criado_em           timestamptz
+  atualizado_em       timestamptz
 
 fotos_ocorrencias
-  id              uuid  PK
-  ocorrencia_id   uuid  FK → ocorrencias(id)
-  url             text               (URL pública do Storage)
-  storage_path    text               (caminho no bucket fotos-ocorrencias)
+  id              uuid         PK
+  ocorrencia_id   uuid         FK → ocorrencias(id)
+  url             text         (URL pública do Storage)
+  storage_path    text         (caminho no bucket fotos-ocorrencias)
   criado_em       timestamptz
 
 historico_status
-  id              uuid  PK
-  ocorrencia_id   uuid  FK → ocorrencias(id)
-  status_anterior varchar(20)
-  status_novo     varchar(20)
+  id              uuid         PK
+  ocorrencia_id   uuid         FK → ocorrencias(id)
+  alterado_por    uuid         FK → perfis(id)
+  status_anterior text
+  status_novo     text
   observacao      text
-  alterado_por    uuid  FK → perfis(id)
+  criado_em       timestamptz
+
+suporte
+  id              uuid         PK
+  perfil_id       uuid         FK → perfis(id)
+  tipo            text         (tipo de problema)
+  descricao       text
+  status          text
   criado_em       timestamptz
 
 --------------------------------------------------------------------------------
@@ -100,7 +124,7 @@ RBAC (Controle de Acesso Baseado em Papéis)
 --------------------------------------------------------------------------------
 
 roles
-  id, nome (único), label, nivel (1..10), descricao, ativo, criado_em
+  id, nome (único), label, nivel (int4), descricao, ativo, criado_em
   Hierarquia: 1 = maior autoridade.
     1 super_admin | 2 admin_institucional | 3 gestor_setor
     4 tecnico     | 5 professor           | 6 aluno (padrão)
@@ -110,7 +134,7 @@ permissoes
   Módulos: ocorrencias, usuarios, setores, relatorios, sistema.
 
 role_permissoes (N:N entre roles e permissoes)
-  role_id  FK → roles(id)
+  role_id       FK → roles(id)
   permissao_id  FK → permissoes(id)
   PK (role_id, permissao_id)
 

@@ -91,8 +91,10 @@ automaticamente após a inserção. A partir daí, novas promoções podem ser f
 | `ocorrencias` | Registros de ocorrências |
 | `fotos_ocorrencias` | Referências às fotos no Storage |
 | `historico_status` | Trilha de auditoria das mudanças de status |
+| `suporte` | Chamados de suporte abertos pelos usuários |
 
-O diagrama de relacionamentos está em `modelagem_do_banco/modelo_de_dados.txt`.
+O diagrama de relacionamentos está em `modelagem_do_banco/modelo_de_dados.txt`
+e o diagrama visual completo em `modelagem_do_banco/schema_banco_de_dados.png`.
 
 ---
 
@@ -104,10 +106,9 @@ As instruções para gerar e restaurar um backup estão em `backup_do_banco/LEIA
 
 ## 7. Observações importantes
 
-- A modelagem das tabelas `perfis`, `setores`, `categorias`, `ocorrencias`,
-  `fotos_ocorrencias` e `historico_status` foi reconstruída a partir do uso real no
-  código (`src/services/`). Os tipos refletem o comportamento da aplicação; ajuste
-  conforme as definições exatas do seu projeto Supabase, se necessário.
+- A modelagem em `script_criacao_banco.sql` e `modelagem_do_banco/modelo_de_dados.txt`
+  reflete o schema real do banco, documentado no diagrama
+  `modelagem_do_banco/schema_banco_de_dados.png`.
 - Os **dados de setores e categorias** em `script_insercao_dados.sql` são um conjunto
   inicial de exemplo. Ajuste nomes, ícones e a marcação `restrito` conforme a realidade
   da instituição. A categoria `Problema com aluno` deve permanecer com `restrito = true`.
